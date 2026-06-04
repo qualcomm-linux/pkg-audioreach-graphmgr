@@ -1,19 +1,24 @@
-Source: template
-Section: libs
+Source: audioreach-graphmgr
+Section: misc
 Priority: optional
-Maintainer: Simon Beaudoin <sbeaudoi@qti.qualcomm.com>
-Build-Depends: debhelper (>= 13)
+Maintainer: Radhika Garg <radhgarg@qti.qualcomm.com>
+Rules-Requires-Root: no
+Build-Depends: debhelper-compat (= 13),
+ libglib2.0-dev,
+ pkg-config,
+ audioreach-graphservices,
+ audioreach-conf,
+ libexpat1-dev,
+ git,
+ libssl-dev,
+ ca-certificates,
+ autotools-dev,
+ libtinyalsa-dev
 Standards-Version: 4.6.2
 
-Package: template1
-Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}
-Description: Template package
- This is an example package to demonstrate the Qualcomm OSS development flow
 
-Package: template-dev
-Section: libdevel
-Architecture: any
-Depends: template1 (= ${binary:Version}), ${misc:Depends}
-Description: Template package dev
- This is an example package to demonstrate the Qualcomm OSS development flow
+Package: audioreach-graphmgr
+Architecture: arm64
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: Qualcomm audio graphservice
+

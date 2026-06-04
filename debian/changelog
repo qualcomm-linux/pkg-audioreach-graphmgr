@@ -1,5 +1,5 @@
-template-package-name (1.0.0-1) UNRELEASED; urgency=medium
+audioreach-graphmgr (1.0.0-1) unstable; urgency=low
 
-  * Populate.
+  * Initial release.
 
- -- Github Service Bot <githubservice@qti.qualcomm.com>  Tue, 07 Oct 2025 14:21:59 -0700
+ -- Radhika Garg <radhgarg@qti.qualcomm.com>  Mon, 15 Dec 2025 15:19:40 +0530

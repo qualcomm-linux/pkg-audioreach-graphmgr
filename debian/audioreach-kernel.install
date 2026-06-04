@@ -1,0 +1,2 @@
+audioreach.rules etc/udev/rules.d/
+asoc-blacklist.conf etc/modprobe.d/

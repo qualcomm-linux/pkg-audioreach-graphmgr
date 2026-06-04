@@ -2,3 +2,26 @@
 
 %:
 	dh $@
+
+override_dh_auto_configure:
+	dh_auto_configure -- --with-glib --with-syslog --with-no-ipc
+	
+	
+
+override_dh_auto_install:
+	dh_auto_install
+	# Additional manual installation that Yocto's do_install:append did
+ifeq ($(NO_IPC),)
+	# Install systemd service
+	install -D -m0644 debian/agm_server.service \
+		debian/agm-server/etc/systemd/system/agm_server.service
+
+	# Enable service by default (multi-user.target.wants)
+	install -d debian/agm-server/etc/systemd/system/multi-user.target.wants
+	ln -sf /etc/systemd/system/agm_server.service \
+		debian/agm-server/etc/systemd/system/multi-user.target.wants/agm_server.service
+
+	# Install dbus config
+	install -D -m0644 debian/agm-dbus.conf \
+		debian/agm-server/etc/dbus-1/system.d/agm-dbus.conf
+endif
