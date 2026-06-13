@@ -1,0 +1,62 @@
+Source: audioreach-graphmgr
+Section: misc
+Priority: optional
+Maintainer: Sairamreddy Bojja <sbojja@qti.qualcomm.com>
+Rules-Requires-Root: no
+Build-Depends: debhelper-compat (= 13),
+ libglib2.0-0,
+ libglib2.0-dev,
+ pkg-config,
+ audioreach-conf,
+ libtinyalsa2,
+ libtinyalsa-dev,
+ libtinycompress0,
+ libtinycompress-dev,
+ audioreach-graphservices,
+ audioreach-graphservices-dev,
+ libexpat1-dev,
+Standards-Version: 4.6.2
+Homepage: https://github.com/Audioreach/audioreach-graphmgr
+Vcs-Git: https://github.com/qualcomm-linux/pkg-audioreach-graphmgr -b debian/latest
+Vcs-Browser: https://github.com/qualcomm-linux/pkg-audioreach-graphmgr
+
+Package: audioreach-graphmgr
+Architecture: arm64
+Section: libs
+Depends: ${misc:Depends},
+ libtinyalsa2,
+ libtinycompress0,
+ audioreach-conf,
+ audioreach-graphservices,
+Description: AudioReach graph manager
+ Provides AudioReach Graph Manager (AGM) and TinyALSA-based
+ plugins for managing and controlling audio use case graphs
+ via AudioReach graph services.
+
+Package: audioreach-graphmgr-dev
+Architecture: arm64
+Description: AudioReach graphmgr - development files
+ AudioReach graph manager
+ Provides AudioReach Graph Manager (AGM) and TinyALSA-based
+ plugins for managing and controlling audio use case graphs
+ via AudioReach graph services.
+ .
+ This package contains library headers for the shared libraries shipped in the
+ audioreach-graphmgr package.
+Section: libdevel
+Depends: audioreach-graphmgr (= ${binary:Version}), ${misc:Depends}
+
+Package: audioreach-graphmgr-utils
+Section: utils
+Architecture: arm64
+Depends:
+ audioreach-graphmgr (= ${binary:Version}),
+ ${misc:Depends},
+Description: AudioReach graphmgr - utils files
+ AudioReach graph manager
+ Provides AudioReach Graph Manager (AGM) and TinyALSA-based
+ plugins for managing and controlling audio use case graphs
+ via AudioReach graph services.
+ .
+ This package contains binary files shipped in the
+ audioreach-graphmgr package.
