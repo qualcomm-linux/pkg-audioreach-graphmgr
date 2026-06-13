@@ -1,0 +1,2 @@
+usr/bin/ats_gateway
+usr/lib/${DEB_HOST_MULTIARCH}/*.la
