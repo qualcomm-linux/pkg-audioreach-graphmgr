@@ -1,0 +1,10 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+includedir=@includedir@
+
+Name: sndparser
+Description: sndparser library
+Version: @LT_VERSION@
+Libs: -L${libdir}
+Cflags: -I${includedir}/sndparser
