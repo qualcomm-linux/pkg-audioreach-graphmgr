@@ -1,3 +1,9 @@
+audioreach-graphmgr (1.0.0-1) UNRELEASED; urgency=medium
+
+  * New upstream release
+
+ -- GitHub Service Bot <githubservice@qti.qualcomm.com>  Sun, 14 Jun 2026 09:34:56 +0000
+
 audioreach-graphmgr (1.0.0-1) unstable; urgency=low
 
   * Initial release.
