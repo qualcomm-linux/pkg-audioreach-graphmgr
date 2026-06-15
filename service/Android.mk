@@ -1,0 +1,95 @@
+LOCAL_PATH := $(call my-dir)
+# Build libagm_headers
+include $(CLEAR_VARS)
+LOCAL_MODULE                := libagm_headers
+LOCAL_VENDOR_MODULE         := true
+LOCAL_EXPORT_C_INCLUDE_DIRS := $(LOCAL_PATH)/inc/public
+include $(BUILD_HEADER_LIBRARY)
+
+# Build libagm
+include $(CLEAR_VARS)
+
+LOCAL_MODULE        := libagm
+LOCAL_MODULE_OWNER  := qti
+LOCAL_MODULE_TAGS   := optional
+LOCAL_VENDOR_MODULE := true
+
+LOCAL_CFLAGS        := -D_ANDROID_ -DAGM_DEBUG_METADATA -DAGM_USE_CUTILS
+LOCAL_CFLAGS        += -Wno-tautological-compare -Wno-macro-redefined -Wall
+LOCAL_CFLAGS        += -D_GNU_SOURCE -DACDB_PATH=\"/vendor/etc/acdbdata/\"
+LOCAL_CFLAGS        += -DACDB_DELTA_FILE_PATH="/data/vendor/audio/acdbdata/delta"
+
+LOCAL_C_INCLUDES    := $(LOCAL_PATH)/inc/public
+LOCAL_C_INCLUDES    += $(LOCAL_PATH)/inc/private
+
+LOCAL_EXPORT_C_INCLUDE_DIRS := $(LOCAL_PATH)/inc/public
+
+LOCAL_SRC_FILES  := \
+    src/agm.c\
+    src/graph.c\
+    src/graph_module.c\
+    src/metadata.c\
+    src/session_obj.c\
+    src/device.c \
+    src/utils.c \
+    src/device_hw_ep.c \
+    src/agm_memlogger.c
+
+# add for gcov dump
+ifeq ($(AUDIO_FEATURE_ENABLED_GCOV), true)
+LOCAL_CFLAGS += -DAUDIO_FEATURE_ENABLED_GCOV -g --coverage -fprofile-arcs -ftest-coverage
+LOCAL_CPPFLAGS += -g --coverage -fprofile-arcs -ftest-coverage
+LOCAL_LDFLAGS += -g --coverage -fprofile-arcs -ftest-coverage
+endif
+
+LOCAL_HEADER_LIBRARIES := \
+    libspf-headers \
+    libutils_headers \
+    libacdb_headers \
+    libarmemlog_headers
+
+LOCAL_SHARED_LIBRARIES := \
+    libar-gsl \
+    liblog \
+    liblx-osal \
+    libaudioroute \
+    libats \
+    libarmemlog \
+    libcutils \
+    libsndcardparser
+
+ifeq ($(ENABLE_HYP), true)
+LOCAL_CFLAGS += -DUSE_DEFAULT_ACDB_PATH -DBYPASS_ALSA_HW -DCARD_STATE_UNSUPPORTED
+endif
+
+#if android version is R, use qtitinyalsa lib otherwise use upstream ones
+#This assumes we would be using AR code only for Android R and subsequent versions.
+ifneq ($(filter R 11,$(PLATFORM_VERSION)),)
+LOCAL_SHARED_LIBRARIES += libqti-tinyalsa
+else
+LOCAL_SHARED_LIBRARIES += liboss_tinyalsa
+endif
+
+
+ifeq ($(strip $(AUDIO_FEATURE_ENABLED_DYNAMIC_LOG)), true)
+LOCAL_CFLAGS           += -DDYNAMIC_LOG_ENABLED
+LOCAL_C_INCLUDES       += $(TOP)/external/expat/lib/expat.h
+LOCAL_SHARED_LIBRARIES += libaudio_log_utils
+LOCAL_SHARED_LIBRARIES += libexpat
+LOCAL_HEADER_LIBRARIES += libaudiologutils_headers
+endif
+
+ifeq ($(AUDIO_FEATURE_ARE_ON_APPS), true)
+$(info compiling ARE on ARM changes)
+LOCAL_CFLAGS += -DARE_ON_APPS
+LOCAL_SHARED_LIBRARIES += \
+    libspf_utils \
+    libar-gpr
+
+LOCAL_HEADER_LIBRARIES +=  \
+    libposal_headers \
+    libspf_api \
+    libspf_utils_headers
+endif
+
+include $(BUILD_SHARED_LIBRARY)
