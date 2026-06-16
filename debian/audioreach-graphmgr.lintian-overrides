@@ -1,0 +1,3 @@
+audioreach-graphmgr: shared-library-lacks-version
+audioreach-graphmgr: package-name-doesnt-match-sonames
+audioreach-graphmgr: lacks-unversioned-link-to-shared-library
