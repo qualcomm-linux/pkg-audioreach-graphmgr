@@ -1,5 +1,9 @@
 #!/usr/bin/make -f
 
+# Errors with default -Werror=format-security that needs to be
+# patched and/or fixed upstream.
+export DEB_CFLAGS_MAINT_APPEND = -Wno-format -Wno-format-security
+
 %:
 	dh $@
 
