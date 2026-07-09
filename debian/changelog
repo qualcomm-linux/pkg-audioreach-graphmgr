@@ -1,8 +1,9 @@
-audioreach-graphmgr (1.0.0-0qli+staging1~bpo13+1~) UNRELEASED; urgency=medium
+audioreach-graphmgr (1.0.0-0qli+staging1~bpo13+1) trixie; urgency=medium
 
+  [ Agathe Porte ]
   * Rebuild for trixie.
 
- -- Agathe Porte <agathe.porte@oss.qualcomm.com>  Thu, 09 Jul 2026 14:45:33 +0200
+ -- root <root@89f84bc395d9>  Thu, 09 Jul 2026 13:23:49 +0000
 
 audioreach-graphmgr (1.0.0-0qli+staging1) forky; urgency=medium
 
