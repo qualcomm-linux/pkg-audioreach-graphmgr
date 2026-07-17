@@ -443,7 +443,7 @@ static DBusHandlerResult disconnection_filter_cb(DBusConnection *conn,
 }
 
 void agm_free_session(gpointer c_data) {
-    agm_session_data *data = (agm_session_data *)data;
+    agm_session_data *data = (agm_session_data *)c_data;
 
     if(data == NULL)
         return;
@@ -1459,7 +1459,7 @@ static void ipc_agm_get_aif_info_list(DBusConnection *conn,
     DBusMessageIter arg_i;
     DBusMessageIter r_arg, array_i, struct_i;
     agm_module_dbus_data *mdata = (agm_module_dbus_data *)userdata;
-    size_t num_aif_info;
+    size_t num_aif_info = 0;
     struct aif_info *aifinfo = NULL;
     char *name;
     int i = 0;
@@ -2068,21 +2068,31 @@ static void ipc_agm_session_set_config(DBusConnection *conn,
                             "agm_session_set_config failed.");
         return;
     }
+    uint32_t total_buf_size = buffer_config.count * (uint32_t)buffer_config.size;
+    if (buffer_config.count == 0 || buffer_config.size == 0 ||
+        total_buf_size / buffer_config.count != (uint32_t)buffer_config.size) {
+        AGM_LOGE("set_config session %u invalid buffer params count=%u size=%u",
+                 ses_data->session_id, buffer_config.count, buffer_config.size);
+        agm_dbus_send_error(mdata->conn, msg, DBUS_ERROR_FAILED,
+                            "set_config failed: invalid or overflowing buffer params");
+        return;
+    }
     pthread_mutex_lock(&ses_data->lock);
-    if (ses_data->buf == NULL || ses_data->buf_size != buffer_config.size) {
+    if (ses_data->buf == NULL || ses_data->buf_size != total_buf_size) {
         if (ses_data->buf != NULL) {
             free(ses_data->buf);
             ses_data->buf = NULL;
         }
-        ses_data->buf = (void*) calloc(1, buffer_config.size);
+        ses_data->buf = (void*) calloc(1, total_buf_size);
         if (ses_data->buf == NULL) {
-            AGM_LOGE("Cannot allocate memory for buffer\n");
+            AGM_LOGE("Cannot allocate memory for buffer session %u total=%u",
+                     ses_data->session_id, total_buf_size);
             pthread_mutex_unlock(&ses_data->lock);
             agm_dbus_send_error(mdata->conn, msg, DBUS_ERROR_FAILED,
                                 "Cannot allocate memory for buffer");
             return;
         }
-        ses_data->buf_size = buffer_config.size;
+        ses_data->buf_size = total_buf_size;
     }
     pthread_mutex_unlock(&ses_data->lock);
 
@@ -2159,12 +2169,20 @@ static void ipc_agm_session_write(DBusConnection *conn,
     dbus_message_iter_get_fixed_array(&array_i, addr_value, &n_elements);
 
     pthread_mutex_lock(&ses_data->lock);
-    ses_data->buf_size = buf_size;
     if (ses_data->thread_state != SES_THREAD_IDLE) {
         pthread_mutex_unlock(&ses_data->lock);
         agm_dbus_send_error(mdata->conn, msg, DBUS_ERROR_FAILED, "write via async failed");
         return;
     }
+    if (n_elements < 0 || (uint32_t)n_elements > ses_data->buf_size) {
+        pthread_mutex_unlock(&ses_data->lock);
+        AGM_LOGE("session %u write overflow: n_elements=%d > allocated buf_size=%u",
+                 ses_data->session_id, n_elements, ses_data->buf_size);
+        agm_dbus_send_error(mdata->conn, msg, DBUS_ERROR_FAILED,
+                            "write failed: data size exceeds allocated buffer");
+        return;
+    }
+    ses_data->buf_size = buf_size;
     memcpy(ses_data->buf, value, n_elements);
     ses_data->thread_state = SES_THREAD_WRITE_QUEUED;
     snprintf(ses_data->eventType, sizeof("Signal"), "%s", "Signal");

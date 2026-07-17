@@ -909,7 +909,7 @@ int graph_stop(struct graph_obj *graph_obj,
 
     pthread_mutex_lock(&graph_obj->lock);
     AGM_LOGD("entry graph_handle %p\n", graph_obj->graph_handle);
-    if ((graph_obj->state & (CLOSED))) {
+    if (graph_obj->state == CLOSED) {
        AGM_LOGE("graph object is not in correct state, current state %d\n",
                     graph_obj->state);
        ret = -EINVAL;
