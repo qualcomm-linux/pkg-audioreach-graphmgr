@@ -1,8 +1,12 @@
-audioreach-graphmgr (1.0.0-0qli+staging1~bpo13+4~) UNRELEASED; urgency=medium
+audioreach-graphmgr (1.0.1-1) UNRELEASED; urgency=medium
 
+  [ root ]
   * Unreleased changes
 
- -- root <root@bc0783d6afac>  Mon, 13 Jul 2026 12:01:15 +0000
+  [ GitHub Service Bot ]
+  * New upstream release
+
+ -- GitHub Service Bot <githubservice@qti.qualcomm.com>  Fri, 17 Jul 2026 13:46:43 +0000
 
 audioreach-graphmgr (1.0.0-0qli+staging1~bpo13+3) trixie; urgency=medium
 
