@@ -100,6 +100,7 @@ struct session_obj {
     bool ec_ref_state;
     uint32_t rx_metadata_sz;
     uint32_t tx_metadata_sz;
+    size_t bytes_written;
     pthread_mutex_t lock;
     pthread_mutex_t cb_pool_lock;
 };

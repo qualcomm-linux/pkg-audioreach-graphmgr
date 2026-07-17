@@ -1050,6 +1050,7 @@ static int session_prepare(struct session_obj *sess_obj)
                 goto done;
             } else {
                 sess_obj->state = SESSION_PREPARED;
+                sess_obj->bytes_written = 0;
             }
         }
     } else if(sess_obj->state != SESSION_STARTED) {
@@ -2520,6 +2521,29 @@ int session_obj_write(struct session_obj *sess_obj, void *buff, size_t *count)
     ret = graph_write(sess_obj->graph, &buffer, count);
     if (ret) {
         AGM_LOGE("Error:%d writing to graph\n", ret);
+        goto done;
+    }
+
+    /*
+     * Auto-start the session when start_threshold is configured and the
+     * session is in PREPARED state. Once the total bytes written reaches
+     * or exceeds start_threshold, AGM triggers session_start() internally
+     * so the client does not need to call agm_session_start() explicitly.
+     */
+    if (sess_obj->stream_config.start_threshold > 0 &&
+        sess_obj->state == SESSION_PREPARED) {
+        sess_obj->bytes_written += *count;
+        if (sess_obj->bytes_written >= sess_obj->stream_config.start_threshold) {
+            AGM_LOGD("start_threshold (%u bytes) reached after %zu bytes written,"
+                     " auto-starting session %d\n",
+                     sess_obj->stream_config.start_threshold,
+                     sess_obj->bytes_written, sess_obj->sess_id);
+            ret = session_start(sess_obj);
+            if (ret)
+                AGM_LOGE("Error:%d auto-starting session %d on threshold\n",
+                         ret, sess_obj->sess_id);
+            sess_obj->bytes_written = 0;
+        }
     }
 
 done:

@@ -162,6 +162,10 @@ int agm_init()
         ret = pthread_create(&ats_thread, (const pthread_attr_t *) &tattr,
                                            ats_init_thread, NULL);
         if (ret) {
+            AGM_LOGI("ats thread: SCHED_FIFO failed (err=%d), retrying with default scheduling", ret);
+            ret = pthread_create(&ats_thread, NULL, ats_init_thread, NULL);
+        }
+        if (ret) {
             AGM_LOGE("ats init thread creation failed");
             ats_thread_started = false;
         } else {
