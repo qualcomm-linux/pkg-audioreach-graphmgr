@@ -2,7 +2,8 @@
 
 # Errors with default -Werror=format-security that needs to be
 # patched and/or fixed upstream.
-export DEB_CFLAGS_MAINT_APPEND = -Wno-format -Wno-format-security
+export DEB_CFLAGS_MAINT_APPEND = -Wno-format -Wno-format-security -Wl,-z,defs
+export DEB_BUILD_MAINT_OPTIONS = hardening=+all
 
 %:
 	dh $@
