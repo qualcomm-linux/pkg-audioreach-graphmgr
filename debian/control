@@ -2,15 +2,11 @@ Source: audioreach-graphmgr
 Section: misc
 Maintainer: Sairamreddy Bojja <sbojja@qti.qualcomm.com>
 Build-Depends: debhelper-compat (= 13),
- libglib2.0-0,
  libglib2.0-dev,
- pkg-config,
+ pkgconf,
  audioreach-conf,
- libtinyalsa2,
  libtinyalsa-dev,
- libtinycompress0,
  libtinycompress-dev,
- audioreach-graphservices,
  audioreach-graphservices-dev,
  libexpat1-dev,
 Standards-Version: 4.6.2
