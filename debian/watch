@@ -1,0 +1,12 @@
+# Monitor upstream releases of the AudioReach graph manager.
+# Upstream repository: https://github.com/AudioReach/audioreach-graphmgr
+#
+# Tags follow the pattern vX.Y.Z (e.g. v1.0.1, v1.1.0).
+# Vendor-specific tags such as v1.0.0-AU84 are also present; the
+# default GitHub template will surface them. Adjust Matching-Pattern
+# if only pure semantic versions are desired.
+Version: 5
+
+Template: Github
+Owner: AudioReach
+Project: audioreach-graphmgr
