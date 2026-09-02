@@ -7,8 +7,14 @@ Build-Depends: debhelper-compat (= 13),
  audioreach-conf,
  libtinyalsa-dev,
  libtinycompress-dev,
- audioreach-graphservices-dev,
  libexpat1-dev,
+ libar-spfhdrs-dev,
+ libar-gsl-dev,
+ libar-acdb-dev,
+ libar-osal-dev,
+ libar-ats-dev,
+ libar-gpr-dev,
+ libar-util-dev
 Standards-Version: 4.6.2
 Homepage: https://github.com/Audioreach/audioreach-graphmgr
 Vcs-Git: https://github.com/qualcomm-linux/pkg-audioreach-graphmgr
