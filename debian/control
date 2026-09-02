@@ -1,20 +1,21 @@
 Source: audioreach-graphmgr
 Section: misc
 Maintainer: Sairamreddy Bojja <sbojja@qti.qualcomm.com>
-Build-Depends: debhelper-compat (= 13),
- libglib2.0-dev,
- pkgconf,
+Build-Depends:
+ debhelper-compat (= 13),
  audioreach-conf,
- libtinyalsa-dev,
- libtinycompress-dev,
- libexpat1-dev,
- libar-spfhdrs-dev,
- libar-gsl-dev,
  libar-acdb-dev,
- libar-osal-dev,
  libar-ats-dev,
  libar-gpr-dev,
- libar-util-dev
+ libar-gsl-dev,
+ libar-osal-dev,
+ libar-spfhdrs-dev,
+ libar-util-dev,
+ libexpat1-dev,
+ libglib2.0-dev,
+ libtinyalsa-dev,
+ libtinycompress-dev,
+ pkgconf,
 Standards-Version: 4.6.2
 Homepage: https://github.com/Audioreach/audioreach-graphmgr
 Vcs-Git: https://github.com/qualcomm-linux/pkg-audioreach-graphmgr
@@ -24,13 +25,17 @@ Package: libagm1
 Architecture: arm64
 Multi-Arch: same
 Section: libs
-Depends: ${shlibs:Depends},
- ${misc:Depends},
+Depends:
  audioreach-conf,
  qcom-diag-router,
-Provides: audioreach-graphmgr
-Breaks: audioreach-graphmgr (<< 1.0.1-0qli+staging2~)
-Replaces: audioreach-graphmgr (<< 1.0.1-0qli+staging2~)
+ ${misc:Depends},
+ ${shlibs:Depends},
+Provides:
+ audioreach-graphmgr,
+Breaks:
+ audioreach-graphmgr (<< 1.0.1-0qli+staging2~),
+Replaces:
+ audioreach-graphmgr (<< 1.0.1-0qli+staging2~),
 Description: AudioReach graph manager
  Provides AudioReach Graph Manager (AGM) and TinyALSA-based
  plugins for managing and controlling audio use case graphs
@@ -47,10 +52,15 @@ Description: AudioReach graphmgr - development files
  This package contains library headers for the shared libraries shipped in the
  libagm1 package.
 Section: libdevel
-Depends: libagm1 (= ${binary:Version}), ${misc:Depends}
-Provides: audioreach-graphmgr-dev
-Breaks: audioreach-graphmgr-dev (<< 1.0.1-0qli+staging2~)
-Replaces: audioreach-graphmgr-dev (<< 1.0.1-0qli+staging2~)
+Depends:
+ libagm1 (= ${binary:Version}),
+ ${misc:Depends},
+Provides:
+ audioreach-graphmgr-dev,
+Breaks:
+ audioreach-graphmgr-dev (<< 1.0.1-0qli+staging2~),
+Replaces:
+ audioreach-graphmgr-dev (<< 1.0.1-0qli+staging2~),
 
 Package: audioreach-graphmgr-utils
 Section: utils
