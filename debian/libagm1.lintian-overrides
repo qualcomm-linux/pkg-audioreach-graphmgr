@@ -1,0 +1,8 @@
+# Upstream has not yet defined a stable public ABI/export surface, so a symbols
+# file would incorrectly treat internal symbols as supported API.
+libagm1: no-symbols-control-file usr/lib/*/libagm*.so.1*
+libagm1: no-symbols-control-file usr/lib/*/libsndcardparser.so.1*
+
+# https://github.com/AudioReach/audioreach-graphmgr/issues/132
+libagm1: spelling-error-in-binary sesssion session [usr/lib/*/libagm.so.1.0.0]
+libagm1: spelling-error-in-binary wih with [usr/lib/*/libagm_mixer_plugin.so.1.0.0]
