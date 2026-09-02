@@ -3,7 +3,6 @@ Section: misc
 Maintainer: Sairamreddy Bojja <sbojja@qti.qualcomm.com>
 Build-Depends:
  debhelper-compat (= 13),
- audioreach-conf,
  libar-acdb-dev,
  libar-ats-dev,
  libar-gpr-dev,
@@ -16,6 +15,7 @@ Build-Depends:
  libtinyalsa-dev,
  libtinycompress-dev,
  pkgconf,
+ qcom-kvh2xml-dev,
 Standards-Version: 4.6.2
 Homepage: https://github.com/Audioreach/audioreach-graphmgr
 Vcs-Git: https://github.com/qualcomm-linux/pkg-audioreach-graphmgr
