@@ -1,8 +1,22 @@
 audioreach-graphmgr (1.0.1-0qli+staging2~) UNRELEASED; urgency=medium
 
-  * Unreleased changes
+  * d/watch: Add initial watch file.
+  * d/rules: Add hardening and library flags.
+  * d/copyright: Initial DEP-5 copyright.
+  * d/not-installed: Cleanup.
+  * d/control: Drop implicit fields.
+  * d/control: Add runtime dependency on qcom-diag-router.
+  * d/control: Avoid explicit library depends, but rely on shlibs.
+  * d/control: Cleanup build-deps.
+  * d/control: Cleanup Vcs-Git.
+  * d/control: Expand to individual libar-*-dev B-Ds:
+  * d/control: Improve binary naming to libagm1 & libagm-dev.
+  * d/control: Provide old audioreach-graphmgr[-dev] names.
+  * d/libagm-dev.docs: Install Apache-2.0 NOTICE.
+  * d/*.lintian-overrides: Add overrides for known/reported issues.
+  * d/control: Wrap-and-sort.
 
- -- Debusine Action Bot <noreply@bot.invalid>  Fri, 17 Jul 2026 14:24:33 +0000
+ -- Lukas Märdian <lukas.maerdian@oss.qualcomm.com>  Wed, 02 Sep 2026 11:38:59 +0200
 
 audioreach-graphmgr (1.0.1-0qli+staging1) forky; urgency=medium
 
