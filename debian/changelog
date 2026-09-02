@@ -1,5 +1,6 @@
-audioreach-graphmgr (1.0.1-0qli+staging2~) UNRELEASED; urgency=medium
+audioreach-graphmgr (1.0.1-0qli+staging2) forky; urgency=medium
 
+  [ Lukas Märdian ]
   * d/watch: Add initial watch file.
   * d/rules: Add hardening and library flags.
   * d/copyright: Initial DEP-5 copyright.
@@ -16,7 +17,7 @@ audioreach-graphmgr (1.0.1-0qli+staging2~) UNRELEASED; urgency=medium
   * d/*.lintian-overrides: Add overrides for known/reported issues.
   * d/control: Wrap-and-sort.
 
- -- Lukas Märdian <lukas.maerdian@oss.qualcomm.com>  Wed, 02 Sep 2026 11:38:59 +0200
+ -- Debusine Action Bot <noreply@bot.invalid>  Wed, 02 Sep 2026 09:43:10 +0000
 
 audioreach-graphmgr (1.0.1-0qli+staging1) forky; urgency=medium
 
