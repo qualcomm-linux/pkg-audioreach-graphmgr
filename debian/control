@@ -28,6 +28,7 @@ Depends: ${shlibs:Depends},
  ${misc:Depends},
  audioreach-conf,
  qcom-diag-router,
+Provides: audioreach-graphmgr
 Breaks: audioreach-graphmgr (<< 1.0.1-0qli+staging2~)
 Replaces: audioreach-graphmgr (<< 1.0.1-0qli+staging2~)
 Description: AudioReach graph manager
@@ -47,6 +48,7 @@ Description: AudioReach graphmgr - development files
  libagm1 package.
 Section: libdevel
 Depends: libagm1 (= ${binary:Version}), ${misc:Depends}
+Provides: audioreach-graphmgr-dev
 Breaks: audioreach-graphmgr-dev (<< 1.0.1-0qli+staging2~)
 Replaces: audioreach-graphmgr-dev (<< 1.0.1-0qli+staging2~)
 
