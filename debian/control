@@ -21,12 +21,9 @@ Vcs-Browser: https://github.com/qualcomm-linux/pkg-audioreach-graphmgr
 Package: audioreach-graphmgr
 Architecture: arm64
 Section: libs
-Depends: ${shlibs:Depends},${misc:Depends},
- libc6,
- libtinyalsa2,
- libtinycompress0,
+Depends: ${shlibs:Depends},
+ ${misc:Depends},
  audioreach-conf,
- audioreach-graphservices,
  qcom-diag-router,
 Description: AudioReach graph manager
  Provides AudioReach Graph Manager (AGM) and TinyALSA-based
@@ -52,7 +49,7 @@ Architecture: arm64
 Depends:
  audioreach-graphmgr (= ${binary:Version}),
  ${misc:Depends},
- libc6,
+ ${shlibs:Depends},
 Description: AudioReach graphmgr - utils files
  AudioReach graph manager
  Provides AudioReach Graph Manager (AGM) and TinyALSA-based
