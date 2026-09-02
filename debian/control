@@ -27,6 +27,7 @@ Depends: ${shlibs:Depends},${misc:Depends},
  libtinycompress0,
  audioreach-conf,
  audioreach-graphservices,
+ qcom-diag-router,
 Description: AudioReach graph manager
  Provides AudioReach Graph Manager (AGM) and TinyALSA-based
  plugins for managing and controlling audio use case graphs
