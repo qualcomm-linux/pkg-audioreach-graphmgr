@@ -20,19 +20,22 @@ Homepage: https://github.com/Audioreach/audioreach-graphmgr
 Vcs-Git: https://github.com/qualcomm-linux/pkg-audioreach-graphmgr
 Vcs-Browser: https://github.com/qualcomm-linux/pkg-audioreach-graphmgr
 
-Package: audioreach-graphmgr
+Package: libagm1
 Architecture: arm64
+Multi-Arch: same
 Section: libs
 Depends: ${shlibs:Depends},
  ${misc:Depends},
  audioreach-conf,
  qcom-diag-router,
+Breaks: audioreach-graphmgr (<< 1.0.1-0qli+staging2~)
+Replaces: audioreach-graphmgr (<< 1.0.1-0qli+staging2~)
 Description: AudioReach graph manager
  Provides AudioReach Graph Manager (AGM) and TinyALSA-based
  plugins for managing and controlling audio use case graphs
  via AudioReach graph services.
 
-Package: audioreach-graphmgr-dev
+Package: libagm-dev
 Architecture: arm64
 Description: AudioReach graphmgr - development files
  AudioReach graph manager
@@ -41,15 +44,17 @@ Description: AudioReach graphmgr - development files
  via AudioReach graph services.
  .
  This package contains library headers for the shared libraries shipped in the
- audioreach-graphmgr package.
+ libagm1 package.
 Section: libdevel
-Depends: audioreach-graphmgr (= ${binary:Version}), ${misc:Depends}
+Depends: libagm1 (= ${binary:Version}), ${misc:Depends}
+Breaks: audioreach-graphmgr-dev (<< 1.0.1-0qli+staging2~)
+Replaces: audioreach-graphmgr-dev (<< 1.0.1-0qli+staging2~)
 
 Package: audioreach-graphmgr-utils
 Section: utils
 Architecture: arm64
 Depends:
- audioreach-graphmgr (= ${binary:Version}),
+ libagm1 (= ${binary:Version}),
  ${misc:Depends},
  ${shlibs:Depends},
 Description: AudioReach graphmgr - utils files
@@ -59,4 +64,4 @@ Description: AudioReach graphmgr - utils files
  via AudioReach graph services.
  .
  This package contains binary files shipped in the
- audioreach-graphmgr package.
+ libagm1 package.
