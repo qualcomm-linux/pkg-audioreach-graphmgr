@@ -30,6 +30,7 @@ Depends:
  ${shlibs:Depends},
 Recommends:
  audioreach-conf,
+ libagm-tinyalsa-plugins (= ${binary:Version}),
  qcom-diag-router,
 Provides:
  audioreach-graphmgr,
@@ -79,6 +80,17 @@ Depends:
 Description: AudioReach sound-card definition parser development files
  This package contains the public header, linker symlink, and pkg-config
  metadata for the AudioReach sound-card definition parser.
+
+Package: libagm-tinyalsa-plugins
+Architecture: arm64
+Multi-Arch: same
+Section: libs
+Depends:
+ ${misc:Depends},
+ ${shlibs:Depends},
+Description: AudioReach TinyALSA plugin modules
+ This package contains the TinyALSA PCM and mixer plugin modules used by
+ AudioReach Graph Manager.
 
 Package: audioreach-graphmgr-utils
 Section: utils
