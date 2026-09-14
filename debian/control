@@ -23,10 +23,8 @@ Section: libs
 Depends:
  ${misc:Depends},
  ${shlibs:Depends},
-Recommends:
- audioreach-conf,
- libagm-tinyalsa-plugins (= ${binary:Version}),
- qcom-diag-router,
+Suggests:
+ qcom-diag,
 Description: AudioReach graph manager
  Provides the AudioReach Graph Manager (AGM) core library for managing and
  controlling audio use case graphs via AudioReach graph services.
@@ -70,6 +68,7 @@ Architecture: arm64
 Multi-Arch: same
 Section: libs
 Depends:
+ libagm1 (= ${binary:Version}),
  ${misc:Depends},
  ${shlibs:Depends},
 Description: AudioReach TinyALSA plugin modules
@@ -80,6 +79,9 @@ Package: audioreach-graphmgr-utils
 Section: utils
 Architecture: arm64
 Depends:
+ audioreach-calibration-data,
+ audioreach-conf,
+ libagm-tinyalsa-plugins (= ${binary:Version}),
  ${misc:Depends},
  ${shlibs:Depends},
 Description: AudioReach graphmgr - utils files
