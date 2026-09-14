@@ -59,6 +59,27 @@ Breaks:
 Replaces:
  audioreach-graphmgr-dev (<< 1.0.1-0qli+staging2~),
 
+Package: libsndparse1
+Architecture: arm64
+Multi-Arch: same
+Section: libs
+Depends:
+ ${misc:Depends},
+ ${shlibs:Depends},
+Description: AudioReach sound-card definition parser runtime library
+ This package contains the shared library used to parse AudioReach sound-card
+ definition XML files.
+
+Package: libsndparse-dev
+Architecture: arm64
+Section: libdevel
+Depends:
+ libsndparse1 (= ${binary:Version}),
+ ${misc:Depends},
+Description: AudioReach sound-card definition parser development files
+ This package contains the public header, linker symlink, and pkg-config
+ metadata for the AudioReach sound-card definition parser.
+
 Package: audioreach-graphmgr-utils
 Section: utils
 Architecture: arm64
