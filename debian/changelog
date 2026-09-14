@@ -1,5 +1,6 @@
-audioreach-graphmgr (1.0.1-0qli+staging3~) UNRELEASED; urgency=medium
+audioreach-graphmgr (1.0.1-0qli+staging3) forky; urgency=medium
 
+  [ Lukas Märdian ]
   * d/control: Add audioreach-graphmgr-tests for the AGM API integration test.
     - d/p/0003-build-agmtest-without-ipc.patch
     - d/p/0004-update-agmtest-for-current-api.patch
@@ -21,7 +22,7 @@ audioreach-graphmgr (1.0.1-0qli+staging3~) UNRELEASED; urgency=medium
   * d/tests: Add basic autopkgtest.
     - d/p/0005-fix-pkg-config-metadata.patch
 
- -- Lukas Märdian <lukas.maerdian@oss.qualcomm.com>  Mon, 14 Sep 2026 16:09:24 +0200
+ -- Debusine Action Bot <noreply@bot.invalid>  Mon, 14 Sep 2026 14:19:21 +0000
 
 audioreach-graphmgr (1.0.1-0qli+staging2) forky; urgency=medium
 
