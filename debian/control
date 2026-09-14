@@ -47,6 +47,7 @@ Description: AudioReach graphmgr - development files
 Section: libdevel
 Depends:
  libagm1 (= ${binary:Version}),
+ libaudioreach-osal-dev,
  ${misc:Depends},
 Provides:
  audioreach-graphmgr-dev,
