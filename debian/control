@@ -27,12 +27,6 @@ Recommends:
  audioreach-conf,
  libagm-tinyalsa-plugins (= ${binary:Version}),
  qcom-diag-router,
-Provides:
- audioreach-graphmgr,
-Breaks:
- audioreach-graphmgr (<< 1.0.1-0qli+staging2~),
-Replaces:
- audioreach-graphmgr (<< 1.0.1-0qli+staging2~),
 Description: AudioReach graph manager
  Provides the AudioReach Graph Manager (AGM) core library for managing and
  controlling audio use case graphs via AudioReach graph services.
@@ -49,12 +43,6 @@ Depends:
  libagm1 (= ${binary:Version}),
  libaudioreach-osal-dev,
  ${misc:Depends},
-Provides:
- audioreach-graphmgr-dev,
-Breaks:
- audioreach-graphmgr-dev (<< 1.0.1-0qli+staging2~),
-Replaces:
- audioreach-graphmgr-dev (<< 1.0.1-0qli+staging2~),
 
 Package: libsndparse1
 Architecture: arm64
