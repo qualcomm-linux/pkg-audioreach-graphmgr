@@ -98,3 +98,14 @@ Description: AudioReach graphmgr - utils files
  AudioReach Graph Manager utility programs and test tools.
  .
  This package contains the AGM TinyALSA playback and capture test tools.
+
+Package: audioreach-graphmgr-tests
+Architecture: arm64
+Depends:
+ libagm1 (= ${binary:Version}),
+ ${misc:Depends},
+ ${shlibs:Depends},
+Description: AudioReach graphmgr integration test suite
+ This package contains the AudioReach Graph Manager API integration test
+ suite. The tests require a functioning AudioReach service and suitable
+ platform audio hardware.

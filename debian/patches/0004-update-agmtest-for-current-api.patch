@@ -1,0 +1,154 @@
+From: Lukas Märdian <lukas.maerdian@oss.qualcomm.com>
+Date: Mon, 14 Sep 2026 16:15:00 +0200
+Subject: Update agmtest for the current AGM API
+
+Use the public API's uint64_t session handles and its byte-oriented metadata
+arguments. Also include the declaration for sleep(3) and fix calls to the
+local cleanup helper.
+
+Forwarded: not-needed
+---
+ service/test/src/agm_test.c | 49 ++++++++++++++++++++++-----------------------
+ 1 file changed, 24 insertions(+), 25 deletions(-)
+
+diff --git a/service/test/src/agm_test.c b/service/test/src/agm_test.c
+index a3a4f2b..d5d9d65 100644
+--- a/service/test/src/agm_test.c
++++ b/service/test/src/agm_test.c
+@@ -30,6 +30,7 @@
+ //#include "pch.h"
+ #include <agm/agm_api.h>
+ #include <stdio.h>
++#include <unistd.h>
+ 
+ typedef int(*testcase)(void);
+ 
+@@ -40,8 +41,8 @@ struct agm_buffer_config buffer_config = { 4, 320 };
+ uint32_t session_id_rx1 = 1;
+ uint32_t session_id_rx2 = 2;
+ 
+-struct session_obj *sess_handle_rx1 = NULL;
+-struct session_obj *sess_handle_rx2 = NULL;
++uint64_t sess_handle_rx1 = 0;
++uint64_t sess_handle_rx2 = 0;
+ 
+ uint32_t aif_id_rx1 = 1;
+ uint32_t aif_id_rx2 = 2;
+@@ -50,7 +51,7 @@ uint32_t aif_id_rx3 = 3;
+ uint32_t session_id_tx1 = 3;
+ uint32_t aif_id_tx = 4;
+ 
+-struct session_obj *sess_handle_tx1 = NULL;
++uint64_t sess_handle_tx1 = 0;
+ 
+ 
+ uint32_t stream_metadata[] = {
+@@ -137,13 +138,13 @@ int setup_device_rx()
+ 	}
+ 
+ 	// device metadata
+-	ret = agm_aif_set_metadata(aif_id_rx1, sizeof(dev_rx_metadata), dev_rx_metadata);
++	ret = agm_aif_set_metadata(aif_id_rx1, sizeof(dev_rx_metadata), (uint8_t *)dev_rx_metadata);
+ 	if (ret) {
+ 		goto done;
+ 	}
+ 
+ 	// stream metadata
+-	ret = agm_session_aif_set_metadata(session_id_rx1, aif_id_rx1, sizeof(dev_rx_metadata), dev_rx_metadata);
++	ret = agm_session_aif_set_metadata(session_id_rx1, aif_id_rx1, sizeof(dev_rx_metadata), (uint8_t *)dev_rx_metadata);
+ 	if (ret) {
+ 		goto done;
+ 	}
+@@ -163,13 +164,13 @@ int setup_device_tx()
+ 	}
+ 
+ 	// device metadata
+-	ret = agm_aif_set_metadata(aif_id_tx, sizeof(dev_tx_metadata), dev_tx_metadata);
++	ret = agm_aif_set_metadata(aif_id_tx, sizeof(dev_tx_metadata), (uint8_t *)dev_tx_metadata);
+ 	if (ret) {
+ 		goto done;
+ 	}
+ 
+ 	// stream metadata
+-	ret = agm_session_aif_set_metadata(session_id_tx1, aif_id_tx, sizeof(dev_tx_metadata), dev_tx_metadata);
++	ret = agm_session_aif_set_metadata(session_id_tx1, aif_id_tx, sizeof(dev_tx_metadata), (uint8_t *)dev_tx_metadata);
+ 	if (ret) {
+ 		goto done;
+ 	}
+@@ -190,13 +191,13 @@ int setup_device_rx2()
+ 	}
+ 
+ 	// device metadata
+-	ret = agm_aif_set_metadata(aif_id_rx3, sizeof(dev_rx2_metadata), dev_rx2_metadata);
++	ret = agm_aif_set_metadata(aif_id_rx3, sizeof(dev_rx2_metadata), (uint8_t *)dev_rx2_metadata);
+ 	if (ret) {
+ 		goto done;
+ 	}
+ 
+ 	// stream device2 metadata
+-	ret = agm_session_aif_set_metadata(session_id_rx1, aif_id_rx2, sizeof(dev_rx2_metadata), dev_rx2_metadata);
++	ret = agm_session_aif_set_metadata(session_id_rx1, aif_id_rx2, sizeof(dev_rx2_metadata), (uint8_t *)dev_rx2_metadata);
+ 	if (ret) {
+ 		goto done;
+ 	}
+@@ -216,13 +217,13 @@ int setup_device_rx3()
+ 	}
+ 
+ 	// device3 metadata
+-	ret = agm_aif_set_metadata(aif_id_rx3, sizeof(dev_rx3_metadata), dev_rx3_metadata);
++	ret = agm_aif_set_metadata(aif_id_rx3, sizeof(dev_rx3_metadata), (uint8_t *)dev_rx3_metadata);
+ 	if (ret) {
+ 		goto done;
+ 	}
+ 
+ 	// stream device3 metadata
+-	ret = agm_session_aif_set_metadata(session_id_rx1, aif_id_rx3, sizeof(dev_rx3_metadata), dev_rx3_metadata);
++	ret = agm_session_aif_set_metadata(session_id_rx1, aif_id_rx3, sizeof(dev_rx3_metadata), (uint8_t *)dev_rx3_metadata);
+ 	if (ret) {
+ 		goto done;
+ 	}
+@@ -236,7 +237,7 @@ int setup_playback_stream()
+ 	int ret =0;
+ 
+ 	// stream metadata
+-	ret = agm_session_set_metadata(session_id_rx1, sizeof(stream_metadata), stream_metadata);
++	ret = agm_session_set_metadata(session_id_rx1, sizeof(stream_metadata), (uint8_t *)stream_metadata);
+ 	if (ret) {
+ 		goto done;
+ 	}
+@@ -298,7 +299,7 @@ int setup_playback_stream_2()
+ 	int ret =0;
+ 
+ 	// stream metadata
+-	ret = agm_session_set_metadata(session_id_rx2, sizeof(stream_metadata), stream_metadata);
++	ret = agm_session_set_metadata(session_id_rx2, sizeof(stream_metadata), (uint8_t *)stream_metadata);
+ 	if (ret) {
+ 		goto done;
+ 	}
+@@ -361,7 +362,7 @@ int setup_capture_stream()
+ 	int ret =0;
+ 
+ 	// stream metadata
+-	agm_session_set_metadata(session_id_tx1, sizeof(stream_metadata), stream_metadata);
++	agm_session_set_metadata(session_id_tx1, sizeof(stream_metadata), (uint8_t *)stream_metadata);
+ 	if (ret) {
+ 		goto done;
+ 	}
+@@ -1330,7 +1331,7 @@ int test_stream_set_cal()
+ 		goto fail;
+ 	}
+ 
+-	ret = setup_playback_stream_stop_close(sess_handle_rx1);
++	ret = setup_playback_stream_stop_close();
+ 	if (ret) {
+ 		goto fail;
+ 	}
+@@ -1397,7 +1398,7 @@ int test_event_registration_and_notification()
+ 
+ 	sleep(3);
+ 
+-	ret = setup_playback_stream_stop_close(sess_handle_rx1);
++	ret = setup_playback_stream_stop_close();
+ 	if (ret) {
+ 		goto fail;
+ 	}
