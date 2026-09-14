@@ -38,20 +38,16 @@ Breaks:
 Replaces:
  audioreach-graphmgr (<< 1.0.1-0qli+staging2~),
 Description: AudioReach graph manager
- Provides AudioReach Graph Manager (AGM) and TinyALSA-based
- plugins for managing and controlling audio use case graphs
- via AudioReach graph services.
+ Provides the AudioReach Graph Manager (AGM) core library for managing and
+ controlling audio use case graphs via AudioReach graph services.
 
 Package: libagm-dev
 Architecture: arm64
 Description: AudioReach graphmgr - development files
- AudioReach graph manager
- Provides AudioReach Graph Manager (AGM) and TinyALSA-based
- plugins for managing and controlling audio use case graphs
- via AudioReach graph services.
+ Development files for the AudioReach Graph Manager core library.
  .
- This package contains library headers for the shared libraries shipped in the
- libagm1 package.
+ This package contains the public AGM headers, linker symlink, and pkg-config
+ metadata.
 Section: libdevel
 Depends:
  libagm1 (= ${binary:Version}),

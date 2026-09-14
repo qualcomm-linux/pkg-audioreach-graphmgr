@@ -1,1 +1,1 @@
-usr/lib/*/*.so.*
+usr/lib/*/libagm.so.1*
