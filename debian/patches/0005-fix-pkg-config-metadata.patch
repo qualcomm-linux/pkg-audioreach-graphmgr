@@ -1,0 +1,34 @@
+From: Lukas Märdian <lukas.maerdian@oss.qualcomm.com>
+Date: Mon, 14 Sep 2026 17:00:00 +0200
+Subject: Provide usable pkg-config metadata
+
+Advertise the installed libraries and public include paths in the pkg-config
+files shipped by the development packages.
+
+Forwarded: https://github.com/AudioReach/audioreach-graphmgr/pull/143
+---
+ service/agm.pc.in             | 2 ++
+ snd_parser/sndparser.pc.in   | 2 +-
+ 2 files changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/service/agm.pc.in b/service/agm.pc.in
+index 3f85f94..e7dce1b 100644
+--- a/service/agm.pc.in
++++ b/service/agm.pc.in
+@@ -5,3 +5,5 @@ includedir=@includedir@
+ Name: agm
+ Description: agm library
+ Version: @LT_VERSION@
++Libs: -L${libdir} -lagm
++Cflags: -I${includedir}
+diff --git a/snd_parser/sndparser.pc.in b/snd_parser/sndparser.pc.in
+index 8f27ac4..9323fa1 100644
+--- a/snd_parser/sndparser.pc.in
++++ b/snd_parser/sndparser.pc.in
+@@ -6,5 +6,5 @@ includedir=@includedir@
+ Name: sndparser
+ Description: sndparser library
+ Version: @LT_VERSION@
+-Libs: -L${libdir}
++Libs: -L${libdir} -lsndcardparser
+ Cflags: -I${includedir}/sndparser

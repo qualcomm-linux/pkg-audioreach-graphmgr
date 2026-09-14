@@ -1,0 +1,2 @@
+Tests: compile-link
+Depends: @, build-essential, pkgconf
