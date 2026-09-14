@@ -1,2 +1,3 @@
-usr/bin/agmcap /usr/bin/
-usr/bin/agmplay /usr/bin/
+etc/backend_conf.xml etc/audioreach/agm
+usr/bin/agmcap
+usr/bin/agmplay

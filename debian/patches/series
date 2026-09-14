@@ -1,1 +1,2 @@
 0001-agm-replace-hardcoded-lib-flags-with-PKG_CHECK_MODUL.patch
+0002-do-not-install-the-private-mixer-helper.patch

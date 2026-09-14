@@ -66,14 +66,9 @@ Package: audioreach-graphmgr-utils
 Section: utils
 Architecture: arm64
 Depends:
- libagm1 (= ${binary:Version}),
  ${misc:Depends},
  ${shlibs:Depends},
 Description: AudioReach graphmgr - utils files
- AudioReach graph manager
- Provides AudioReach Graph Manager (AGM) and TinyALSA-based
- plugins for managing and controlling audio use case graphs
- via AudioReach graph services.
+ AudioReach Graph Manager utility programs and test tools.
  .
- This package contains binary files shipped in the
- libagm1 package.
+ This package contains the AGM TinyALSA playback and capture test tools.

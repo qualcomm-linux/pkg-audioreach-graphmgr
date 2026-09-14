@@ -1,0 +1,26 @@
+From: Lukas Märdian <lukas.maerdian@oss.qualcomm.com>
+Date: Mon, 14 Sep 2026 14:30:00 +0200
+Subject: Do not install the private mixer helper as a shared library.
+Link it into the test tools as a non-installed convenience library instead.
+
+Forwarded: not-needed
+---
+ plugins/tinyalsa/test/Makefile.am | 3 +--
+ 1 file changed, 1 insertions(+), 2 deletions(-)
+
+diff --git a/plugins/tinyalsa/test/Makefile.am b/plugins/tinyalsa/test/Makefile.am
+index cf29d8a..6a98839 100644
+--- a/plugins/tinyalsa/test/Makefile.am
++++ b/plugins/tinyalsa/test/Makefile.am
+@@ -11,10 +11,9 @@ AM_CFLAGS += -Dstrlcpy=g_strlcpy -Dstrlcat=g_strlcat
+ endif
+ 
+ AM_CFLAGS += -DBACKEND_CONF_FILE=\"/etc/backend_conf.xml\"
+-lib_LTLIBRARIES      = libagmmixer.la
++noinst_LTLIBRARIES    = libagmmixer.la
+ libagmmixer_la_SOURCES   = agmmixer.c
+ libagmmixer_la_CFLAGS = $(AM_CFLAGS)
+-libagmmixer_la_LDFLAGS   = -shared -version-number @LT_VERSION_NUMBER@
+ libagmmixer_la_LIBADD   = -ltinyalsa -ldl -lexpat @GLIB_LIBS@
+ 
+ bin_PROGRAMS = agmplay
