@@ -1,8 +1,27 @@
 audioreach-graphmgr (1.0.1-0qli+staging3~) UNRELEASED; urgency=medium
 
-  * Unreleased changes
+  * d/control: Add audioreach-graphmgr-tests for the AGM API integration test.
+    - d/p/0003-build-agmtest-without-ipc.patch
+    - d/p/0004-update-agmtest-for-current-api.patch
+  * d/control: Build-depend on renamed libaudioreach-*.
+    - d/p/0001-agm-replace-hardcoded-lib-flags-with-PKG_CHECK_MODUL.patch
+  * d/control: Drop unused build-deps.
+  * d/control: Avoid depends on data/application package from libagm1.
+  * d/control: Isolate AGM core library as libagm1.
+  * d/control: libagm-dev depends on libaudioreach-osal-dev.
+  * d/control: Split libsndparse1.
+  * d/control: Split libagm-tinyalsa-plugins.
+  * d/control: Enable tests via audioreach-graphmgr-tests.
+    - d/p/0003-build-agmtest-without-ipc.patch
+    - d/p/0004-update-agmtest-for-current-api.patch
+  * d/rules: Move backend_conf.xml into (test)-utils package.
+    - d/p/0002-do-not-install-the-private-mixer-helper.patch
+  * d/rules: Look for card-defs.xml in /etc/audioreach/.
+  * d/not-installed: Exclude plugin/test pkg-config metadata.
+  * d/tests: Add basic autopkgtest.
+    - d/p/0005-fix-pkg-config-metadata.patch
 
- -- Debusine Action Bot <noreply@bot.invalid>  Wed, 02 Sep 2026 09:46:59 +0000
+ -- Lukas Märdian <lukas.maerdian@oss.qualcomm.com>  Mon, 14 Sep 2026 16:09:24 +0200
 
 audioreach-graphmgr (1.0.1-0qli+staging2) forky; urgency=medium
 
