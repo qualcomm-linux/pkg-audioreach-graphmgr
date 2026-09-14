@@ -1,5 +1,3 @@
 0001-agm-replace-hardcoded-lib-flags-with-PKG_CHECK_MODUL.patch
 0002-do-not-install-the-private-mixer-helper.patch
-0003-build-agmtest-without-ipc.patch
-0004-update-agmtest-for-current-api.patch
 0005-fix-pkg-config-metadata.patch

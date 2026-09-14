@@ -1,2 +1,0 @@
-# The integration test executable is intentionally shipped without a manual page.
-audioreach-graphmgr-tests: no-manual-page [usr/bin/agmtest]
