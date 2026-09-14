@@ -26,10 +26,11 @@ Architecture: arm64
 Multi-Arch: same
 Section: libs
 Depends:
- audioreach-conf,
- qcom-diag-router,
  ${misc:Depends},
  ${shlibs:Depends},
+Recommends:
+ audioreach-conf,
+ qcom-diag-router,
 Provides:
  audioreach-graphmgr,
 Breaks:
