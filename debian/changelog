@@ -1,10 +1,11 @@
-audioreach-graphmgr (1.0.1-0qli+staging4~) UNRELEASED; urgency=medium
+audioreach-graphmgr (1.0.1-0qli+staging4) forky; urgency=medium
 
+  [ Lukas Märdian ]
   * d/control: Drop -staging upgrade path.
   * d/control: Drop non-functional audioreach-graphmgr-tests.
   * d/control: Update runtime depends.
 
- -- Lukas Märdian <lukas.maerdian@oss.qualcomm.com>  Tue, 15 Sep 2026 15:23:09 +0200
+ -- Debusine Action Bot <noreply@bot.invalid>  Tue, 15 Sep 2026 13:35:14 +0000
 
 audioreach-graphmgr (1.0.1-0qli+staging3) forky; urgency=medium
 
