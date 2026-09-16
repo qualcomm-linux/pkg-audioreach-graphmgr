@@ -1,0 +1,84 @@
+From: Chiluka Rohith <rchiluka@qti.qualcomm.com>
+Date: Thu, 10 Sep 2026 20:34:31 +0530
+Subject: agm: replace hardcoded lib flags with PKG_CHECK_MODULES
+
+Add PKG_CHECK_MODULES for gsl, ar_osal and ats in configure.ac so
+library names are resolved from installed .pc files at configure time
+rather than being hardcoded in Makefiles. GPR check is conditional on
+--with-are-on-apps as it is only required in that build path.
+
+Origin: https://github.com/AudioReach/audioreach-graphmgr/pull/138
+Signed-off-by: Chiluka Rohith <rchiluka@qti.qualcomm.com>
+---
+ configure.ac                    | 18 +++++++++++++++++-
+ ipc/DBus/agm_server/Makefile.am |  2 +-
+ service/Makefile.am             |  4 ++--
+ 3 files changed, 20 insertions(+), 4 deletions(-)
+
+diff --git a/configure.ac b/configure.ac
+index 323f639..770fd5a 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -76,10 +76,26 @@ AM_CONDITIONAL([AGM_NO_IPC], [test "x${with_no_ipc}" = "xyes"])
+ PKG_CHECK_MODULES([SPF], [spf])
+ AC_SUBST(SPF_CFLAGS)
+ 
+-
+ PKG_CHECK_MODULES([KVH2XML], [kvh2xml])
+ AC_SUBST([KVH2XML_CFLAGS])
+ 
++PKG_CHECK_MODULES([GSL], [gsl])
++AC_SUBST([GSL_LIBS])
++AC_SUBST([GSL_CFLAGS])
++
++PKG_CHECK_MODULES([OSAL], [ar_osal])
++AC_SUBST([OSAL_LIBS])
++AC_SUBST([OSAL_CFLAGS])
++
++PKG_CHECK_MODULES([ATS], [ats])
++AC_SUBST([ATS_LIBS])
++AC_SUBST([ATS_CFLAGS])
++
++if (test "x${with_are_on_apps}" = "xyes"); then
++    PKG_CHECK_MODULES([GPR], [gpr])
++    AC_SUBST([GPR_LIBS])
++fi
++
+ # Check dependency only if with_no_ipc is not set
+ if (test "x${with_no_ipc}" = "xno"); then
+ PKG_CHECK_MODULES(DBUS, [ dbus-1 >= 1.4.12 ], dummy=yes,
+diff --git a/ipc/DBus/agm_server/Makefile.am b/ipc/DBus/agm_server/Makefile.am
+index 62a6ea4..1bfb02f 100644
+--- a/ipc/DBus/agm_server/Makefile.am
++++ b/ipc/DBus/agm_server/Makefile.am
+@@ -13,7 +13,7 @@ lib_LTLIBRARIES = libagmserverwrapper.la
+ libagmserverwrapper_la_SOURCES = ./src/agm-dbus-utils.cpp ./src/agm_server_wrapper_dbus.cpp
+ libagmserverwrapper_la_CPPFLAGS = $(AM_CPPFLAGS) $(DBUS_CFLAGS) $(GLIB_CFLAGS) -DAGM_USE_SYSLOG
+ libagmserverwrapper_la_LIBADD = -lagm -L$(top_builddir)/service/.libs
+-libagmserverwrapper_la_LDFLAGS = -ldl -lpthread -lar-osal -shared -avoid-version $(DBUS_LIBS)
++libagmserverwrapper_la_LDFLAGS = -ldl -lpthread @OSAL_LIBS@ -shared -avoid-version $(DBUS_LIBS)
+ 
+ bin_PROGRAMS = agm_server
+ 
+diff --git a/service/Makefile.am b/service/Makefile.am
+index 4cc8f24..ddc71f3 100644
+--- a/service/Makefile.am
++++ b/service/Makefile.am
+@@ -25,7 +25,7 @@ agm_sources = ./src/graph.c \
+ 
+ lib_LTLIBRARIES = libagm.la
+ libagm_la_SOURCES = $(agm_sources)
+-libagm_la_LIBADD = -ltinyalsa -lar-osal -lar-gsl -lar-ats -lsndcardparser
++libagm_la_LIBADD = -ltinyalsa @OSAL_LIBS@ @GSL_LIBS@ @ATS_LIBS@ -lsndcardparser
+ libagm_la_LDFLAGS = -L$(top_builddir)/snd_parser/.libs
+ 
+ libagm_la_CFLAGS = $(AM_CFLAGS) -DACDB_PATH=\"/etc/acdbdata/\" -DACDB_DELTA_FILE_PATH="/etc/acdbdata/delta"
+@@ -50,7 +50,7 @@ libagm_la_CFLAGS += -Dstrlcpy=g_strlcpy -Dstrlcat=g_strlcat
+ endif
+ 
+ if USE_ARE_ON_APPS
+-libagm_la_LIBADD += -lspf -lar-gpr
++libagm_la_LIBADD += -lspf @GPR_LIBS@
+ libagm_la_CFLAGS += -DARE_ON_APPS
+ endif
+ 

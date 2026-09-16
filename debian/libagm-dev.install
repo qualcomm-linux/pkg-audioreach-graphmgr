@@ -1,0 +1,3 @@
+usr/include/agm/*.h
+usr/lib/*/libagm.so
+usr/lib/*/pkgconfig/agm.pc

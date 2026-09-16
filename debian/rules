@@ -2,7 +2,10 @@
 
 # Errors with default -Werror=format-security that needs to be
 # patched and/or fixed upstream.
-export DEB_CFLAGS_MAINT_APPEND = -Wno-format -Wno-format-security
+export DEB_CFLAGS_MAINT_APPEND = -Wno-format -Wno-format-security -Wl,-z,defs \
+                                 -DBACKEND_CONF_FILE=\"/etc/audioreach/agm/backend_conf.xml\" \
+                                 -DCARD_DEF_FILE=\"/etc/audioreach/card-defs.xml\"
+export DEB_BUILD_MAINT_OPTIONS = hardening=+all
 
 %:
 	dh $@

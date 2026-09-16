@@ -1,0 +1,3 @@
+# https://github.com/AudioReach/audioreach-graphmgr/issues/133
+audioreach-graphmgr-utils: no-manual-page [usr/bin/agmcap]
+audioreach-graphmgr-utils: no-manual-page [usr/bin/agmplay]

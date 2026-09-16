@@ -1,2 +1,4 @@
-usr/bin/ats_gateway
 usr/lib/${DEB_HOST_MULTIARCH}/*.la
+usr/lib/${DEB_HOST_MULTIARCH}/pkgconfig/agmplugin.pc
+usr/lib/${DEB_HOST_MULTIARCH}/pkgconfig/agmtest.pc
+usr/lib/${DEB_HOST_MULTIARCH}/pkgconfig/agmalsaplugin.pc

@@ -1,0 +1,11 @@
+# These are dynamically loaded plugin modules rather than conventional
+# link-time libraries with a stable public ABI.
+libagm-tinyalsa-plugins: no-symbols-control-file usr/lib/*/libagm_*_plugin.so.1*
+
+# The unversioned names are the TinyALSA loader entry points, not development
+# linker symlinks.  Both plugin modules intentionally share this package.
+libagm-tinyalsa-plugins: link-to-shared-library-in-wrong-package usr/lib/*/libagm_*_plugin.so.1*
+libagm-tinyalsa-plugins: package-name-doesnt-match-sonames libagm-mixer-plugin1 libagm-pcm-plugin1
+
+# https://github.com/AudioReach/audioreach-graphmgr/issues/132
+libagm-tinyalsa-plugins: spelling-error-in-binary wih with [usr/lib/*/libagm_mixer_plugin.so.1.0.0]

@@ -1,0 +1,8 @@
+# Upstream has not yet defined a stable public ABI/export surface, so a symbols
+# file would incorrectly treat internal symbols as supported API.
+libsndparse1: no-symbols-control-file usr/lib/*/libsndcardparser.so.1*
+# https://github.com/AudioReach/audioreach-graphmgr/issues/142
+libsndparse1: package-name-doesnt-match-sonames libsndcardparser1
+# This .so is also a plugin dlopen()ed by TinyALSA's snd_card_plugin.c
+libsndparse1: lacks-unversioned-link-to-shared-library example: usr/lib/*/libsndcardparser.so [usr/lib/*/libsndcardparser.so.1.0.0]
+libsndparse1: link-to-shared-library-in-wrong-package usr/lib/*/libsndcardparser.so.1.0.0 [usr/lib/*/libsndcardparser.so]

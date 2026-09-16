@@ -1,0 +1,3 @@
+usr/lib/*/libsndcardparser.so.1*
+# This .so is a plugin dlopen()ed by TinyALSA's snd_card_plugin.c
+usr/lib/*/libsndcardparser.so

@@ -1,0 +1,40 @@
+#!/bin/sh
+# Compile and link small clients through the pkg-config metadata shipped by
+# libagm-dev and libsndparse-dev.  The programs only take function addresses;
+# they do not start AGM or require audio hardware.
+set -eu
+
+tmpdir=$(mktemp -d)
+trap 'rm -rf "$tmpdir"' EXIT
+cd "$tmpdir"
+
+pkg-config --exists agm
+pkg-config --exists sndparser
+
+cat > agm-client.c <<'EOF'
+#include <agm/agm_api.h>
+
+int main(void)
+{
+	return agm_init == 0;
+}
+EOF
+
+cc $(pkg-config --cflags agm) agm-client.c \
+	$(pkg-config --libs agm) -o agm-client
+./agm-client
+
+cat > sndparser-client.c <<'EOF'
+#include <snd-card-def.h>
+
+int main(void)
+{
+	return snd_card_def_get_card == 0;
+}
+EOF
+
+cc $(pkg-config --cflags sndparser) sndparser-client.c \
+	$(pkg-config --libs sndparser) -o sndparser-client
+./sndparser-client
+
+echo "pkg-config compile/link checks passed"
