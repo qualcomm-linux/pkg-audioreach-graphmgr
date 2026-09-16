@@ -1,0 +1,105 @@
+#!/bin/sh
+set -eu
+
+skip_test()
+{
+	echo "WARNING: skipping rb3gen2-playback: $*" >&2
+	exit 77
+}
+
+if [ "$(id -u)" -ne 0 ]; then
+	echo "This test requires root privileges" >&2
+	exit 1
+fi
+
+compatible=/sys/firmware/devicetree/base/compatible
+if [ ! -r "$compatible" ] || \
+	! tr '\000' '\n' < "$compatible" | grep -Fxq qcom,qcs6490-rb3gen2; then
+	skip_test "this hardware test only supports Thundercomm RB3 Gen 2"
+fi
+
+missing_packages=
+for package in \
+	audioreach-dkms \
+	audioreach-graphmgr-utils \
+	build-essential \
+	ffmpeg \
+	hexagon-dsp-binaries-thundercomm-rb3gen2 \
+	mount \
+	python3 \
+	tinyalsa
+do
+	if ! dpkg-query -W -f='${Status}' "$package" 2>/dev/null | \
+		grep -Fqx 'install ok installed'; then
+		missing_packages="${missing_packages}${missing_packages:+ }$package"
+	fi
+done
+
+if [ -n "$missing_packages" ]; then
+	skip_test "required packages are not installed: $missing_packages"
+fi
+
+if [ ! -d /sys/module/audioreach_driver ]; then
+	skip_test "audioreach_driver is not loaded; install the prerequisites and reboot"
+fi
+
+if ! mountpoint -q /sys/kernel/debug; then
+	mount -t debugfs debugfs /sys/kernel/debug
+fi
+
+python3 debian/tests/agmrecover.py
+
+set_mixer_control()
+{
+	tinymix -D 0 set "$1" "$2"
+}
+
+set_mixer_control 'WSA RX0 MUX' 'AIF1_PB'
+set_mixer_control 'WSA RX1 MUX' 'AIF1_PB'
+set_mixer_control 'WSA_RX0 INP0' 'RX0'
+set_mixer_control 'WSA_RX1 INP0' 'RX1'
+set_mixer_control 'SpkrLeft COMP Switch' '1'
+set_mixer_control 'SpkrLeft BOOST Switch' '1'
+set_mixer_control 'SpkrLeft DAC Switch' '1'
+set_mixer_control 'SpkrRight COMP Switch' '1'
+set_mixer_control 'SpkrRight BOOST Switch' '1'
+set_mixer_control 'SpkrRight DAC Switch' '1'
+set_mixer_control 'WSA_COMP1 Switch' '1'
+set_mixer_control 'WSA_COMP2 Switch' '1'
+set_mixer_control 'WSA_Softclip0 Enable' '1'
+set_mixer_control 'WSA_Softclip1 Enable' '1'
+set_mixer_control 'WSA_RX0 Digital Volume' '81'
+set_mixer_control 'WSA_RX1 Digital Volume' '81'
+set_mixer_control 'SpkrLeft PA Volume' '17'
+set_mixer_control 'SpkrRight PA Volume' '17'
+set_mixer_control 'WSA_RX0 Digital Mute' '0'
+set_mixer_control 'WSA_RX1 Digital Mute' '0'
+
+tone="$AUTOPKGTEST_TMP/stereo-tone.wav"
+ffmpeg -hide_banner -loglevel error -nostdin -y \
+	-f lavfi \
+	-i 'aevalsrc=0.1*sin(2*PI*440*t)|0.1*sin(2*PI*660*t):s=48000:d=5' \
+	-c:a pcm_s16le "$tone"
+
+playback_log="$AUTOPKGTEST_TMP/agmplay.log"
+playback_status=0
+timeout 30s agmplay "$tone" -D 100 -d 100 \
+	-i CODEC_DMA-LPAIF_WSA-RX-0 > "$playback_log" 2>&1 || playback_status=$?
+cat "$playback_log"
+
+if [ -n "${AUTOPKGTEST_ARTIFACTS:-}" ]; then
+	cp "$playback_log" "$AUTOPKGTEST_ARTIFACTS/"
+fi
+
+if [ "$playback_status" -ne 0 ]; then
+	echo "agmplay exited with status $playback_status" >&2
+	exit "$playback_status"
+fi
+
+grep -Fq 'Playing sample: 2 ch, 48000 hz, 16 bit' "$playback_log"
+
+echo ""
+echo "RB3 Gen 2 AGM speaker playback completed."
+echo "Did you hear the sound playing?"
+echo "The speakers need to be connected to the RB3's bottom interposer"
+echo "board (not mezzanine), using a red-black, red-black cabling."
