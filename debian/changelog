@@ -1,11 +1,12 @@
-audioreach-graphmgr (1.0.1-0qli1~) UNRELEASED; urgency=medium
+audioreach-graphmgr (1.0.1-0qli1) forky; urgency=medium
 
+  [ Lukas Märdian ]
   * Rebuild for QLI.
   * d/gbp.conf: Update for QLI branch.
   * d/libsndparse*.install: Move .so symlink into libsndparse1, because it is
     loaded as a TinyALSA plugin, too.
 
- -- Lukas Märdian <lukas.maerdian@oss.qualcomm.com>  Wed, 16 Sep 2026 11:18:22 +0200
+ -- Debusine Action Bot <noreply@bot.invalid>  Wed, 16 Sep 2026 09:27:37 +0000
 
 audioreach-graphmgr (1.0.1-0qli+staging4) forky; urgency=medium
 
