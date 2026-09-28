@@ -1,3 +1,4 @@
 0001-agm-replace-hardcoded-lib-flags-with-PKG_CHECK_MODUL.patch
-0002-do-not-install-the-private-mixer-helper.patch
 0005-fix-pkg-config-metadata.patch
+0004-configure-add-configurable-path-options-for-card-def.patch
+0002-do-not-install-the-private-mixer-helper.patch
