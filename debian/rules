@@ -2,16 +2,17 @@
 
 # Errors with default -Werror=format-security that needs to be
 # patched and/or fixed upstream.
-export DEB_CFLAGS_MAINT_APPEND = -Wno-format -Wno-format-security -Wl,-z,defs \
-                                 -DBACKEND_CONF_FILE=\"/etc/audioreach/agm/backend_conf.xml\" \
-                                 -DCARD_DEF_FILE=\"/etc/audioreach/card-defs.xml\"
+export DEB_CFLAGS_MAINT_APPEND = -Wno-format -Wno-format-security -Wl,-z,defs
 export DEB_BUILD_MAINT_OPTIONS = hardening=+all
 
 %:
 	dh $@
 
 override_dh_auto_configure:
-	dh_auto_configure -- --with-glib --with-syslog --with-no-ipc
+	dh_auto_configure -- --with-glib --with-syslog --with-no-ipc \
+		--with-card-def-file=/etc/audioreach/card-defs.xml \
+		--with-backend-conf-file=/etc/audioreach/agm/backend_conf.xml \
+		--with-acdb-path=/usr/share/audioreach/acdbdata/
 
 override_dh_fixperms:
 	dh_fixperms
