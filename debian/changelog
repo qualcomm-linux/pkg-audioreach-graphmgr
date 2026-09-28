@@ -1,8 +1,10 @@
 audioreach-graphmgr (1.0.1-0qli2~) UNRELEASED; urgency=medium
 
-  * Unreleased changes
+  * d/t/rb3gen2-playback: Add on-device (RB3-Gen2) audio testing.
+  * d/rules: Use buildsystem to define dynamic (data-)dirs.
+    - d/p/debian/patches/0004-configure-add-configurable-path-options-for-card-def.patch
 
- -- Debusine Action Bot <noreply@bot.invalid>  Wed, 16 Sep 2026 09:37:27 +0000
+ -- Lukas Märdian <lukas.maerdian@oss.qualcomm.com>  Mon, 28 Sep 2026 14:51:46 +0200
 
 audioreach-graphmgr (1.0.1-0qli1) forky; urgency=medium
 
