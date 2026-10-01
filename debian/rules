@@ -12,7 +12,8 @@ override_dh_auto_configure:
 	dh_auto_configure -- --with-glib --with-syslog --with-no-ipc \
 		--with-card-def-file=/etc/audioreach/card-defs.xml \
 		--with-backend-conf-file=/etc/audioreach/agm/backend_conf.xml \
-		--with-acdb-path=/usr/share/audioreach/acdbdata/
+		--with-acdb-path=/usr/share/audioreach/acdbdata/ \
+		--with-acdb-delta-path=/etc/audioreach/acdbdata/delta
 
 override_dh_fixperms:
 	dh_fixperms

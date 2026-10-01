@@ -3,36 +3,41 @@ Date: Thu, 24 Sep 2026 16:16:07 +0530
 Subject: configure: add configurable path options for card-defs,
  backend-conf and ACDB
 
-Add --with-card-def-file, --with-backend-conf-file and --with-acdb-path
-configure options so that the paths to card-defs.xml, backend_conf.xml
-and the ACDB data directory can be set at build time.
+Add --with-card-def-file, --with-backend-conf-file, --with-acdb-path and
+--with-acdb-delta-path configure options so that the paths to card-defs.xml,
+backend_conf.xml and the ACDB data and delta directories can be set at
+build time.
 
 Defaults preserve the existing upstream behaviour:
   card-defs.xml      -> /etc/card-defs.xml
   backend_conf.xml   -> /etc/backend_conf.xml
   ACDB data          -> /etc/acdbdata/
+  ACDB delta         -> /etc/acdbdata/delta
 
 Required for QLI/Debian packaging where audioreach-conf moves
 card-defs.xml to /etc/audioreach/ and ACDB data to
-/usr/share/audioreach/acdbdata/.
+/usr/share/audioreach/acdbdata/. The writable delta directory is configured
+separately so it can remain under /etc/audioreach/acdbdata/delta.
 
-Validated on iq-9075-evk with QLI build.
+Keep ACDB_DELTA_FILE_PATH unquoted because graph.c stringifies it using
+CONV_TO_STRING(). ACDB_PATH is used directly as a string literal and must
+retain its escaped quotes.
 
 Origin: https://github.com/AudioReach/audioreach-graphmgr/pull/150
 
 Signed-off-by: Tejas Vijay Kanfade <tkanfade@qti.qualcomm.com>
 ---
- configure.ac                      | 29 +++++++++++++++++++++++++++++
+ configure.ac                     | 36 ++++++++++++++++++++++++++++++++++++
  plugins/tinyalsa/test/Makefile.am |  2 +-
  service/Makefile.am               |  2 +-
  snd_parser/Makefile.am            |  2 +-
- 4 files changed, 32 insertions(+), 3 deletions(-)
+ 4 files changed, 39 insertions(+), 3 deletions(-)
 
 Index: pkg-audioreach-graphmgr/configure.ac
 ===================================================================
 --- pkg-audioreach-graphmgr.orig/configure.ac
 +++ pkg-audioreach-graphmgr/configure.ac
-@@ -45,6 +45,35 @@ AC_ARG_WITH([glib],
+@@ -45,6 +45,42 @@ AC_ARG_WITH([glib],
        AC_HELP_STRING([--with-glib],
           [enable glib, Build against glib. Use this when building for HLOS systems which use glib]))
  
@@ -54,9 +59,16 @@ Index: pkg-audioreach-graphmgr/configure.ac
 +    [AGM_ACDB_PATH="$withval"],
 +    [AGM_ACDB_PATH="/etc/acdbdata/"])
 +
++AC_ARG_WITH([acdb-delta-path],
++    AS_HELP_STRING([--with-acdb-delta-path=DIR],
++        [path to writable ACDB delta directory [default=/etc/acdbdata/delta]]),
++    [AGM_ACDB_DELTA_PATH="$withval"],
++    [AGM_ACDB_DELTA_PATH="/etc/acdbdata/delta"])
++
 +AC_SUBST([AGM_CARD_DEF_FILE])
 +AC_SUBST([AGM_BACKEND_CONF_FILE])
 +AC_SUBST([AGM_ACDB_PATH])
++AC_SUBST([AGM_ACDB_DELTA_PATH])
 +
 +AC_ARG_WITH([card-def-native],
 +    AS_HELP_STRING([--with-card-def-native=PATH],
@@ -90,7 +102,7 @@ Index: pkg-audioreach-graphmgr/service/Makefile.am
  libagm_la_LDFLAGS = -L$(top_builddir)/snd_parser/.libs
  
 -libagm_la_CFLAGS = $(AM_CFLAGS) -DACDB_PATH=\"/etc/acdbdata/\" -DACDB_DELTA_FILE_PATH="/etc/acdbdata/delta"
-+libagm_la_CFLAGS = $(AM_CFLAGS) -DACDB_PATH=\"@AGM_ACDB_PATH@\" -DACDB_DELTA_FILE_PATH=\"@AGM_ACDB_PATH@delta\"
++libagm_la_CFLAGS = $(AM_CFLAGS) -DACDB_PATH=\"@AGM_ACDB_PATH@\" -DACDB_DELTA_FILE_PATH=@AGM_ACDB_DELTA_PATH@
  libagm_la_CFLAGS += -DCARD_STATE_UNSUPPORTED
  
  if USE_DEFAULT_ACDB_PATH
