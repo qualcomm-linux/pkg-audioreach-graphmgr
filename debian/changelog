@@ -1,8 +1,9 @@
-audioreach-graphmgr (1.0.1-0qli3~bpo13+1~) UNRELEASED; urgency=medium
+audioreach-graphmgr (1.0.1-0qli3~bpo13+1) trixie; urgency=medium
 
+  [ Lukas Märdian ]
   * Rebuild for Trixie.
 
- -- Lukas Märdian <lukas.maerdian@oss.qualcomm.com>  Thu, 01 Oct 2026 16:25:09 +0200
+ -- Debusine Action Bot <noreply@bot.invalid>  Thu, 01 Oct 2026 14:26:59 +0000
 
 audioreach-graphmgr (1.0.1-0qli3) forky; urgency=medium
 
