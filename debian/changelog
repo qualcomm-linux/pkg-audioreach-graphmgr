@@ -1,8 +1,8 @@
 audioreach-graphmgr (1.0.1-0qli3~bpo13+1~) UNRELEASED; urgency=medium
 
-  * Unreleased changes
+  * Rebuild for Trixie.
 
- -- Debusine Action Bot <noreply@bot.invalid>  Mon, 28 Sep 2026 13:10:02 +0000
+ -- Lukas Märdian <lukas.maerdian@oss.qualcomm.com>  Thu, 01 Oct 2026 16:25:09 +0200
 
 audioreach-graphmgr (1.0.1-0qli3) forky; urgency=medium
 
