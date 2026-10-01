@@ -1,8 +1,10 @@
 audioreach-graphmgr (1.0.1-0qli3~) UNRELEASED; urgency=medium
 
-  * Unreleased changes
+  * d/rules: Fix ACDB delta path in independent writable dir.
+    - d/p/0004-configure-add-configurable-path-options-for-card-def.patch
+    - d/libagm1.dirs
 
- -- Debusine Action Bot <noreply@bot.invalid>  Mon, 28 Sep 2026 12:57:44 +0000
+ -- Lukas Märdian <lukas.maerdian@oss.qualcomm.com>  Thu, 01 Oct 2026 16:17:31 +0200
 
 audioreach-graphmgr (1.0.1-0qli2) forky; urgency=medium
 
