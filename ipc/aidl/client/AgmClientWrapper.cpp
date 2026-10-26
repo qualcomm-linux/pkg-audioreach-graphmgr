@@ -1,11 +1,12 @@
 /*
  * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
- * SPDX-License-Identifier: BSD-3-Clause-Clear
+ * SPDX-License-Identifier: BSD-3-Clause
  */
 
 #define NDEBUG 0
 #define LOG_TAG "AgmIpc::Client"
 
+#include <algorithm>
 #include <agm/agm_api.h>
 #include <aidl/vendor/qti/hardware/agm/IAGM.h>
 #include <android/binder_manager.h>
@@ -261,8 +262,9 @@ int agm_session_read(uint64_t handle, void *buf, size_t *byte_count) {
     auto status = client->ipc_agm_session_read(handle, bytesToRead, &aidlReturn);
 
     if (status.isOk()) {
-        memcpy(buf, aidlReturn.data(), aidlReturn.size());
-        *byte_count = aidlReturn.size();
+        size_t copySize = std::min(aidlReturn.size(), (size_t)bytesToRead);
+        memcpy(buf, aidlReturn.data(), copySize);
+        *byte_count = copySize;
     }
     return statusTFromBinderStatus(status, __func__);
 }
@@ -271,6 +273,7 @@ int agm_session_write(uint64_t handle, void *buf, size_t *byte_count) {
     ALOGV("%s  handle = %llx, bytes %d ", __func__, (unsigned long long)handle, *byte_count);
 
     auto client = getAgm();
+    RETURN_IF_AGM_SERVICE_NOT_REGISTERED(client);
 
     auto aidlBuffer = LegacyToAidl::convertRawPayloadToVector(buf, *byte_count);
 
@@ -336,8 +339,9 @@ int agm_session_aif_get_tag_module_info(uint32_t session_id, uint32_t aif_id, vo
     auto status = client->ipc_agm_session_aif_get_tag_module_info(session_id, aif_id, aidlListSize,
                                                                   &aidlModuleInfoList);
     if (status.isOk()) {
-        if (payload != NULL) memcpy(payload, aidlModuleInfoList.data(), aidlModuleInfoList.size());
-        *size = aidlModuleInfoList.size();
+        size_t copySize = std::min(aidlModuleInfoList.size(), (size_t)aidlListSize);
+        if (payload != NULL) memcpy(payload, aidlModuleInfoList.data(), copySize);
+        *size = copySize;
     }
     auto ret = statusTFromBinderStatus(status, __func__);
     ALOGV("%s session_id =%d, aif_id = %d ret %d, size %d ", __func__, session_id, aif_id, ret,
@@ -348,6 +352,7 @@ int agm_session_aif_get_tag_module_info(uint32_t session_id, uint32_t aif_id, vo
 int agm_session_get_params(uint32_t session_id, void *payload, size_t size) {
     ALOGV("%s  sessionId %d  size %d ", __func__, session_id, size);
     auto client = getAgm();
+    RETURN_IF_AGM_SERVICE_NOT_REGISTERED(client);
 
     if (size <= 0) {
         ALOGE("%s  sessionId %d : Invalid input size %d ", __func__, session_id, size);
@@ -447,8 +452,9 @@ int agm_get_params_from_acdb_tunnel(void *payload, size_t *size) {
     auto status = client->ipc_agm_get_params_from_acdb_tunnel(aidlPayload, &aidlReturn);
 
     if (status.isOk() && payload != NULL) {
-        memcpy(payload, aidlReturn.data(), aidlReturn.size());
-        *size = aidlReturn.size();
+        size_t copySize = std::min(aidlReturn.size(), (size_t)*size);
+        memcpy(payload, aidlReturn.data(), copySize);
+        *size = copySize;
     }
 
     return statusTFromBinderStatus(status, __func__);

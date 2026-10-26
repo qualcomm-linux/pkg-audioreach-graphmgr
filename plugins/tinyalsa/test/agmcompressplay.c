@@ -53,7 +53,7 @@
  *
  * Changes from Qualcomm Technologies, Inc. are provided under the following license:
  * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
- * SPDX-License-Identifier: BSD-3-Clause-Clear
+ * SPDX-License-Identifier: BSD-3-Clause
  */
 
 #include <stdint.h>
@@ -378,7 +378,7 @@ int main(int argc, char **argv)
     exit(EXIT_SUCCESS);
 }
 
-void play_samples(char *name, unsigned int card, unsigned int device, unsigned int *device_kv,
+void play_samples(char *filename, unsigned int card, unsigned int device, unsigned int *device_kv,
                   unsigned int stream_kv, unsigned int instance_kv, unsigned int *devicepp_kv,
                   unsigned long buffer_size, unsigned int frag, unsigned int format,
                   int pause, char **intf_name, int intf_num)
@@ -398,24 +398,25 @@ void play_samples(char *name, unsigned int card, unsigned int device, unsigned i
     int size, index, ret = 0;
     uint32_t miid = 0;
 
-    dev_config = (struct device_config *) malloc(intf_num * sizeof(struct device_config));
-    if (!dev_config) {
-        printf("Failed to allocate memory for dev config");
-        return;
-    }
-    grp_config = (struct group_config *) malloc(intf_num * sizeof(struct group_config));
-    if (!grp_config) {
-        printf("Failed to allocate memory for group config");
-        return;
-    }
-
-    stream_kv = stream_kv ? stream_kv : COMPRESSED_OFFLOAD_PLAYBACK;
 
     if (verbose)
         printf("%s: entry\n", __func__);
-    file = fopen(name, "rb");
+
+    // Validate filename to prevent path traversal
+    if (strstr(filename, "..") != NULL) {
+        printf("Invalid filename provided.\n");
+        return;
+    }
+    // Ensure the filename is within /data directory
+    const char *allowed_prefix = "/data/";
+    if (strncmp(filename, allowed_prefix, strlen(allowed_prefix)) != 0) {
+        printf("Filename must be under /data directory.\n");
+        return;
+    }
+
+    file = fopen(filename, "rb");
     if (!file) {
-        fprintf(stderr, "Unable to open file '%s'\n", name);
+        fprintf(stderr, "Unable to open file '%s'\n", filename);
         exit(EXIT_FAILURE);
     }
 
@@ -447,6 +448,8 @@ void play_samples(char *name, unsigned int card, unsigned int device, unsigned i
 #endif
     } else {
         printf("unknown format");
+        fclose(file);
+        exit(EXIT_FAILURE);
     }
     codec.ch_in = channels;
     codec.ch_out = channels;
@@ -477,6 +480,19 @@ void play_samples(char *name, unsigned int card, unsigned int device, unsigned i
         printf("Failed to open mixer\n");
         goto FILE_EXIT;
     }
+    dev_config = (struct device_config *) malloc(intf_num * sizeof(struct device_config));
+    if (!dev_config) {
+        printf("Failed to allocate memory for dev config");
+        goto MIXER_EXIT;
+    }
+    grp_config = (struct group_config *) malloc(intf_num * sizeof(struct group_config));
+    if (!grp_config) {
+        printf("Failed to allocate memory for group config");
+        goto MIXER_EXIT;
+    }
+
+    stream_kv = stream_kv ? stream_kv : COMPRESSED_OFFLOAD_PLAYBACK;
+
     for (index = 0; index < intf_num; index++) {
         ret = get_device_media_config(BACKEND_CONF_FILE, intf_name[index], &dev_config[index]);
         if (ret) {
@@ -592,7 +608,7 @@ void play_samples(char *name, unsigned int card, unsigned int device, unsigned i
         }
     }
     printf("Playing file %s On Card %u device %u, with buffer of %lu bytes\n",
-            name, card, device, buffer_size);
+            filename, card, device, buffer_size);
     printf("Format %u Channels %u, %u Hz, Bit Rate %d\n",
             SND_AUDIOCODEC_MP3, channels, rate, bits);
 

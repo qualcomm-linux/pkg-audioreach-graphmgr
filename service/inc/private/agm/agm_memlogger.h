@@ -1,8 +1,8 @@
 #ifndef AGM_MEMLOGGER_H
 #define AGM_MEMLOGGER_H
 /*
-* Copyright (c) 2023 Qualcomm Innovation Center, Inc. All rights reserved.
-* SPDX-License-Identifier: BSD-3-Clause-Clear
+* Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
+* SPDX-License-Identifier: BSD-3-Clause
 */
 
 #include "mem_logger.h"

@@ -28,8 +28,8 @@
  *
  * Changes from Qualcomm Innovation Center are provided under the following license:
  *
- * Copyright (c) 2022-2024, Qualcomm Innovation Center, Inc. All rights reserved.
- * SPDX-License-Identifier: BSD-3-Clause-Clear
+ * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
+ * SPDX-License-Identifier: BSD-3-Clause
  */
 
 #define LOG_TAG "AGM: graph_module"
@@ -2273,7 +2273,6 @@ int configure_gapless(struct module_info *gapless_mod,
     AGM_LOGD("GAPLESS module \n");
 
     if (gph_obj->graph_handle == NULL) {
-        pthread_mutex_unlock(&gph_obj->lock);
         AGM_LOGE("invalid graph handle\n");
         ret = -EINVAL;
         goto done;
@@ -2282,7 +2281,6 @@ int configure_gapless(struct module_info *gapless_mod,
 
     reg_ev_payload = calloc(1, payload_size);
     if (reg_ev_payload == NULL) {
-        pthread_mutex_unlock(&gph_obj->lock);
         AGM_LOGE("calloc failed for reg_ev_payload\n");
         ret = -ENOMEM;
         goto done;

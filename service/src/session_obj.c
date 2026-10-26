@@ -27,8 +27,8 @@
  * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  * Changes from Qualcomm Technologies, Inc. are provided under the following license:
- * Copyright (c) 2022-2024 Qualcomm Innovation Center, Inc. All rights reserved.
- * SPDX-License-Identifier: BSD-3-Clause-Clear
+ * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
+ * SPDX-License-Identifier: BSD-3-Clause
  */
 #define LOG_TAG "AGM: session"
 
@@ -123,6 +123,10 @@ static struct aif* aif_obj_create(struct session_obj *sess_obj __unused, int aif
     aif_obj->dev_obj = dev_obj;
 
 done:
+    if (ret || !aif_obj->dev_obj) {
+        free(aif_obj);
+        return NULL;
+    }
     return aif_obj;
 }
 
@@ -322,7 +326,7 @@ static struct session_obj* session_obj_create(int session_id)
 
     obj = calloc(1, sizeof(struct session_obj));
     if (!obj) {
-        AGM_LOGE("Memory allocation failed for sesssion object\n");
+        AGM_LOGE("Memory allocation failed for session object\n");
         return obj;
     }
 
@@ -579,8 +583,19 @@ static int session_disconnect_aif(struct session_obj *sess_obj,
         //this is SSSD condition, hence stop just the stream/stream-device,
         //merged only sess-aif, aif
         pthread_mutex_lock(&aif_obj->dev_obj->lock);
-        merged_meta_sess_aif = metadata_merge(2, &aif_obj->sess_aif_meta,
-                                            &aif_obj->dev_obj->metadata);
+        int dev_open_cnt = aif_obj->dev_obj->refcnt.open;
+        if (dev_open_cnt > 1) {
+            //Backend device is still shared by other clients (e.g. HAL holds
+            //it open/started). Including dev_obj->metadata here would carry the
+            //device sg_props (DEVICE/DEVICE_PP) into the CLOSE_WITH_PROPS prune
+            //and tear down the shared device subgraph still in use, crashing SPF.
+            //Prune only the stream/stream-device; the device subgraph release is
+            //handled by the refcounted device_close() below.
+            merged_meta_sess_aif = metadata_merge(1, &aif_obj->sess_aif_meta);
+        } else {
+            merged_meta_sess_aif = metadata_merge(2, &aif_obj->sess_aif_meta,
+                                                &aif_obj->dev_obj->metadata);
+        }
         pthread_mutex_unlock(&aif_obj->dev_obj->lock);
         if (!merged_meta_sess_aif) {
             AGM_LOGE("No memory to create merged_metadata session_id: %d, \
@@ -1149,8 +1164,9 @@ static int session_start(struct session_obj *sess_obj)
             }
 
             if ((aif_obj->dev_obj->hw_ep_info.intf == SLIMBUS) ||
-                (aif_obj->dev_obj->hw_ep_info.intf == BTFM_PROXY)) {
-                AGM_LOGD("configuring device early - for SLIMBUS/Connectivity Proxy EPs\n");
+                (aif_obj->dev_obj->hw_ep_info.intf == BTFM_PROXY) ||
+                (aif_obj->dev_obj->hw_ep_info.intf == DISPLAY_PORT)) {
+                AGM_LOGD("configuring device early - for SLIMBUS/Connectivity Proxy/Display Port EPs\n");
                 if (aif_obj->state == AIF_OPENED || aif_obj->state == AIF_STOPPED) {
                     agm_trace_begin("device_prepare");
                     ret = device_prepare(aif_obj->dev_obj);
@@ -1192,9 +1208,10 @@ static int session_start(struct session_obj *sess_obj)
                 goto unwind;
             }
 
-            //Continue/SKIP for SLIMBUS/Connectivity Proxy EP as they are started early.
+            //Continue/SKIP for SLIMBUS/Connectivity Proxy/Display Port EP as they are started early.
             if ((aif_obj->dev_obj->hw_ep_info.intf == SLIMBUS) ||
-                (aif_obj->dev_obj->hw_ep_info.intf == BTFM_PROXY)) {
+                (aif_obj->dev_obj->hw_ep_info.intf == BTFM_PROXY) ||
+                (aif_obj->dev_obj->hw_ep_info.intf == DISPLAY_PORT)) {
                 continue;
             }
 

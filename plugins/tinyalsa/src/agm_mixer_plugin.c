@@ -28,7 +28,7 @@
 **
 ** Changes from Qualcomm Technologies, Inc. are provided under the following license:
 ** Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
-** SPDX-License-Identifier: BSD-3-Clause-Clear
+** SPDX-License-Identifier: BSD-3-Clause
 **/
 
 /* agm_mixer.c all names (variable/functions) should have
@@ -611,7 +611,7 @@ static int amp_create_pcm_info_from_card(struct amp_dev_info *adi,
         ret = snd_card_def_get_str(pcm_node, "name",
                                    &adi->names[idx]);
         if (ret) {
-            AGM_LOGE("%s failed to get name for %s pcm wih idx %d\n",
+            AGM_LOGE("%s failed to get name for %s pcm with idx %d\n",
                    __func__, dir, idx);
             return -EINVAL;
         }

@@ -29,7 +29,7 @@
 ** Changes from Qualcomm Technologies, Inc. are provided under the following license:
 **
 ** Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
-** SPDX-License-Identifier: BSD-3-Clause-Clear
+** SPDX-License-Identifier: BSD-3-Clause
 **/
 
 #define LOG_TAG "AGM: device"
@@ -104,6 +104,9 @@ enum qaif_intf_idx {
     QAIF_4 = 4,
     QAIF_5 = 5,
     QAIF_6 = 6,
+    QAIF_7 = 7,
+    QAIF_8 = 8,
+    QAIF_9 = 9,
 };
 
 #define MAX_VIRTUAL_CHILDS 8
@@ -131,6 +134,20 @@ static int populate_hw_ep_intf_idx(hw_ep_info_t *hw_ep_info, char *intf_idx)
             cdc_dma_i2s_tdm_config->intf_idx = CODEC_RX6;
         else if (!strcmp(intf_idx, "7"))
             cdc_dma_i2s_tdm_config->intf_idx = CODEC_RX7;
+        else if (!strcmp(intf_idx, "8"))
+            cdc_dma_i2s_tdm_config->intf_idx = CODEC_RX8;
+        else if (!strcmp(intf_idx, "9"))
+            cdc_dma_i2s_tdm_config->intf_idx = CODEC_RX9;
+        else if (!strcmp(intf_idx, "10"))
+            cdc_dma_i2s_tdm_config->intf_idx = CODEC_RX10;
+        else if (!strcmp(intf_idx, "11"))
+            cdc_dma_i2s_tdm_config->intf_idx = CODEC_RX11;
+        else if (!strcmp(intf_idx, "12"))
+            cdc_dma_i2s_tdm_config->intf_idx = CODEC_RX12;
+        else if (!strcmp(intf_idx, "13"))
+            cdc_dma_i2s_tdm_config->intf_idx = CODEC_RX13;
+        else if (!strcmp(intf_idx, "14"))
+            cdc_dma_i2s_tdm_config->intf_idx = CODEC_RX14;
         else {
              AGM_LOGE("No matching intf_idx found\n");
              return -EINVAL;
@@ -151,6 +168,12 @@ static int populate_hw_ep_intf_idx(hw_ep_info_t *hw_ep_info, char *intf_idx)
             cdc_dma_i2s_tdm_config->intf_idx = QAIF_5;
         else if (!strcmp(intf_idx, "6"))
             cdc_dma_i2s_tdm_config->intf_idx = QAIF_6;
+        else if (!strcmp(intf_idx, "7"))
+            cdc_dma_i2s_tdm_config->intf_idx = QAIF_7;
+        else if (!strcmp(intf_idx, "8"))
+            cdc_dma_i2s_tdm_config->intf_idx = QAIF_8;
+        else if (!strcmp(intf_idx, "9"))
+            cdc_dma_i2s_tdm_config->intf_idx = QAIF_9;
         else {
              AGM_LOGE("No matching intf_idx found for QAIF\n");
              return -EINVAL;

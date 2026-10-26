@@ -26,9 +26,9 @@
 ** OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN
 ** IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 **
-** Changes from Qualcomm Innovation Center are provided under the following license:
-** Copyright (c) 2022-2023 Qualcomm Innovation Center, Inc. All rights reserved.
-** SPDX-License-Identifier: BSD-3-Clause-Clear
+** Changes from Qualcomm Technologies, Inc. are provided under the following license:
+** Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
+** SPDX-License-Identifier: BSD-3-Clause
 */
 
 #include <tinyalsa/asoundlib.h>
@@ -59,7 +59,7 @@ void play_loopback(unsigned int card, unsigned int p_device, unsigned int c_devi
 
 void usage()
 {
-    printf(" Usage: %s [-D card] [-P Hostless Playback device] [-C Hostless Capture device] [-p period_size]\n"
+    printf(" Usage: [-D card] [-P Hostless Playback device] [-C Hostless Capture device] [-p period_size]\n"
            " [-n n_periods]  [-c channels] [-r rate] [-b bits] [-T playback/capture time ]\n"
            " [-i capture intf] [-o playback intf]\n"
            " [-cdkv capture_device_kv] [-pdkv playback_device_kv] [-skv stream_kv]\n"
@@ -162,6 +162,11 @@ int main(int argc, char **argv)
 
         if (*argv)
             argv++;
+    }
+
+    if (c_intf_name == NULL || p_intf_name == NULL) {
+        printf(" Error : Invalid capture or playback interface, exiting");
+        return 1;
     }
 
     ret = get_device_media_config(BACKEND_CONF_FILE, c_intf_name, &capture_config);

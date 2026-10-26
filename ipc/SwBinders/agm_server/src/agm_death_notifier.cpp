@@ -125,7 +125,7 @@ void agm_add_session_obj_handle(uint64_t handle)
           get_client_handle_from_list(IPCThreadState::self()->getCallingPid());
     if (client_handle == NULL) {
         AGM_LOGE("%s: Could not find client handle\n", __func__);
-        goto exit;
+        return;
     }
 
     pthread_mutex_lock(&g_client_list_lock);
@@ -138,7 +138,6 @@ void agm_add_session_obj_handle(uint64_t handle)
     }
     hndl->handle = handle;
     list_add_tail(&client_handle->agm_client_hndl_list, &hndl->list);
-
 exit:
     pthread_mutex_unlock(&g_client_list_lock);
 }

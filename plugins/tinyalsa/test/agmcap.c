@@ -26,10 +26,9 @@
 ** OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
 ** DAMAGE.
 **
-** Changes from Qualcomm Innovation Center are provided under the following license:
-** Copyright (c) 2022-2023 Qualcomm Innovation Center, Inc. All rights reserved.
-** SPDX-License-Identifier: BSD-3-Clause-Clear
-
+** Changes from Qualcomm Technologies, Inc. are provided under the following license:
+** Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
+** SPDX-License-Identifier: BSD-3-Clause
 */
 
 #include <tinyalsa/asoundlib.h>
@@ -81,9 +80,9 @@ static void sigint_handler(int sig)
     capturing = 0;
 }
 
-static void usage(char *progname)
+static void usage(const char *progname)
 {
-    printf(" Usage: %s file.wav [-help print usage] [-D card] [-d device]\n"
+    printf(" Usage: %s file.wav in /data [-help print usage] [-D card] [-d device]\n"
            " [-c channels] [-r rate] [-b bits] [-p period_size]\n"
            " [-n n_periods] [-T capture time] [-i intf_name] [-dkv device_kv]\n"
            " [-dppkv deviceppkv] : Assign 0 if no device pp in the graph\n"
@@ -99,6 +98,7 @@ int main(int argc, char **argv)
 {
     FILE *file;
     struct wav_header header;
+    const char *progname = argv[0];
     unsigned int card = 100;
     unsigned int device = 101;
     unsigned int usb_device = 1;
@@ -110,6 +110,7 @@ int main(int argc, char **argv)
     unsigned int period_count = 4;
     unsigned int cap_time = 0;
     char *intf_name = NULL;
+    char *filename;
     unsigned int device_kv = 0;
     struct device_config config;
     enum pcm_format format;
@@ -120,13 +121,27 @@ int main(int argc, char **argv)
     bool is_24_LE = false;
 
     if (argc < 2) {
-        usage(argv[0]);
+        usage(progname);
         return 1;
     }
 
-    file = fopen(argv[1], "wb");
+    filename = argv[1];
+
+    // Validate filename to prevent path traversal
+    if (strstr(filename, "..") != NULL) {
+        printf("Invalid filename provided.\n");
+        return 1;
+    }
+    // Ensure the filename is within /data directory
+    const char *allowed_prefix = "/data/";
+    if (strncmp(filename, allowed_prefix, strlen(allowed_prefix)) != 0) {
+        printf("Filename must be under /data directory.\n");
+        return 1;
+    }
+
+    file = fopen(filename, "wb");
     if (!file) {
-        printf("Unable to create file '%s'\n", argv[1]);
+        printf("Unable to create file '%s'\n", filename);
         return 1;
     }
 
@@ -194,7 +209,7 @@ int main(int argc, char **argv)
             if (*argv)
                 usb_device = atoi(*argv);
         }else if (strcmp(*argv, "-help") == 0) {
-            usage(argv[0]);
+            usage(progname);
         }
         if (*argv)
             argv++;

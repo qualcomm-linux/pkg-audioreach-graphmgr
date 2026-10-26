@@ -7,7 +7,9 @@ library_includedir = $(includedir)
 AM_CFLAGS = -Wno-unused-parameter
 AM_CFLAGS += -I $(top_srcdir)/include -I $(PKG_CONFIG_SYSROOT_DIR)/usr/include
 AM_CFLAGS += -I $(top_srcdir)/service/inc/public -I $(top_srcdir)/snd_parser/inc
+if USE_GLIB
 AM_CFLAGS += $(GLIB_CFLAGS)
+endif
 AM_CFLAGS += -D__unused=__attribute__\(\(__unused__\)\) -D__LINUX__
 AM_CFLAGS += -I $(top_srcdir)/../../snd_parser/inc
 
@@ -18,7 +20,6 @@ endif
 if USE_G_STR_FUNC
 AM_CFLAGS += -Dstrlcpy=g_strlcpy -Dstrlcat=g_strlcat
 endif
-
 
 if BUILD_ALSALIB
 
@@ -52,6 +53,11 @@ libasound_module_ctl_agm_la_LIBADD  = -lasound -lsndcardparser -lagm
 else
 libasound_module_ctl_agm_la_LDFLAGS += -L$(top_builddir)/ipc/DBus/agm_client/.libs
 libasound_module_ctl_agm_la_LIBADD  = -lasound -lsndcardparser -lagmclient
+endif
+
+if USE_GLIB
+libasound_module_pcm_agm_la_LIBADD += $(GLIB_LIBS)
+libasound_module_ctl_agm_la_LIBADD += $(GLIB_LIBS)
 endif
 
 endif

@@ -26,10 +26,10 @@
 ** OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN
 ** IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 **
-** Changes from Qualcomm Innovation Center are provided under the following license:
+** Changes from Qualcomm Technologies, Inc. are provided under the following license:
 **
-** Copyright (c) 2022-2024, Qualcomm Innovation Center, Inc. All rights reserved.
-** SPDX-License-Identifier: BSD-3-Clause-Clear
+** Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
+** SPDX-License-Identifier: BSD-3-Clause
 **
 **/
 #define LOG_TAG "PLUGIN: compress"
@@ -458,7 +458,7 @@ int agm_compress_tstamp(void *data,
 }
 
 int agm_compress_get_tstamp(void *data,
-                        unsigned int *samples, unsigned int *sampling_rate)
+                        unsigned long long *samples, unsigned int *sampling_rate)
 {
     struct agm_compress_priv *priv = data;
     struct snd_compr_tstamp ktstamp;
@@ -498,7 +498,7 @@ static int agm_compress_avail(void *data,
 }
 
 int agm_compress_get_hpointer(void *data,
-                unsigned int *avail, struct timespec *tstamp)
+                unsigned long long *avail, struct timespec *tstamp)
 {
         struct agm_compress_priv *priv = data;
         struct snd_compr_avail kavail;
@@ -1138,6 +1138,16 @@ void agm_compress_close(void *data)
     pthread_mutex_unlock(&priv->poll_lock);
 
     /* Make sure callbacks are not running at this point */
+    pthread_mutex_destroy(&priv->eos_lock);
+    pthread_cond_destroy(&priv->eos_cond);
+    pthread_mutex_destroy(&priv->early_eos_lock);
+    pthread_cond_destroy(&priv->early_eos_cond);
+    pthread_mutex_destroy(&priv->drain_lock);
+    pthread_cond_destroy(&priv->drain_cond);
+    pthread_mutex_destroy(&priv->poll_lock);
+    pthread_cond_destroy(&priv->poll_cond);
+    pthread_mutex_destroy(&priv->lock);
+
     free(priv);
 
     return;

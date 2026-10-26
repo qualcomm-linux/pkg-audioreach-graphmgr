@@ -1,6 +1,6 @@
 /*
  * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
- * SPDX-License-Identifier: BSD-3-Clause-Clear
+ * SPDX-License-Identifier: BSD-3-Clause
  */
 
 
@@ -92,14 +92,13 @@ void ClientInfo::setAgmServerWrapper(AgmServerWrapper *wrapper) {
     sAgmServerWrapper = wrapper;
 }
 
+// cookie carries the dying client's pid, never a ClientInfo* - onDeath must
+// not touch an object an earlier, duplicate obituary for the same client
+// may already have freed.
 void ClientInfo::onDeath(void *cookie) {
-    ClientInfo *client = static_cast<ClientInfo *>(cookie);
-    ALOGI("Client died (pid): %llu", client->getPid());
-    client->onDeath();
-}
-
-void ClientInfo::onDeath() {
-    sAgmServerWrapper->removeClient(mPid);
+    int pid = static_cast<int>(reinterpret_cast<intptr_t>(cookie));
+    ALOGI("Client died (pid): %d", pid);
+    sAgmServerWrapper->removeClient(pid);
 }
 
 void ClientInfo::registerCallback(const std::shared_ptr<IAGMCallback> &callback,
@@ -111,8 +110,9 @@ void ClientInfo::registerCallback(const std::shared_ptr<IAGMCallback> &callback,
     agm_session_register_cb(in_sessionId, &ClientInfo::onCallback, (enum event_type)in_eventType,
                             (void *)callback.get());
 
-    auto linkRet = AIBinder_linkToDeath(callback->asBinder().get(), mDeathRecipient.get(),
-                                        this /* cookie */);
+    auto linkRet = AIBinder_linkToDeath(
+            callback->asBinder().get(), mDeathRecipient.get(),
+            reinterpret_cast<void *>(static_cast<intptr_t>(mPid)) /* cookie */);
     if (linkRet != STATUS_OK) {
         ALOGV("%s, linkToDeath failed pid %d", __func__, mPid);
     } else {

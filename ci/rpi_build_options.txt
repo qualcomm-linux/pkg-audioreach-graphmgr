@@ -22,3 +22,4 @@
 --disable-static
 --with-are-on-apps
 --with-use-default-acdb-path
+--with-ipc-dbus

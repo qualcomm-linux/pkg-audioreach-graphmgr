@@ -29,4 +29,4 @@ Refer to instruction from [AudioReach Graph Service repository](https://github.c
 
 ## License
 
-Graph Manager is licensed under the BSD-3-Clause-Clear. Check out the [LICENSE](LICENSE) for more details
+Graph Manager is licensed under the BSD-3-Clause. Check out the [LICENSE](LICENSE) for more details.

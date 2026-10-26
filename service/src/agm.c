@@ -26,9 +26,9 @@
  * OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN
  * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
- * Changes from Qualcomm Innovation Center are provided under the following license:
- * Copyright (c) 2022-2023 Qualcomm Innovation Center, Inc. All rights reserved.
- * SPDX-License-Identifier: BSD-3-Clause-Clear
+ * Changes from Qualcomm Technologies, Inc. are provided under the following license:
+ * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
+ * SPDX-License-Identifier: BSD-3-Clause
  */
 #define LOG_TAG "AGM: API"
 #include <agm/agm_api.h>
@@ -37,6 +37,8 @@
 #include <agm/utils.h>
 #ifndef AGM_MEMLOG_UNSUPPORTED
 #include <agm/agm_memlogger.h>
+#else
+#include "gsl_intf.h"
 #endif
 #include "ats.h"
 #include <stdio.h>

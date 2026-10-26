@@ -6,3 +6,5 @@ includedir=@includedir@
 Name: agm
 Description: agm library
 Version: @LT_VERSION@
+Libs: -L${libdir} -lagm
+Cflags: -I${includedir}

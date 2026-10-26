@@ -26,10 +26,9 @@
 ** OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
 ** DAMAGE.
 **
-** Changes from Qualcomm Innovation Center, Inc. are provided under the following license:
-** Copyright (c) 2022-2023 Qualcomm Innovation Center, Inc. All rights reserved.
-** SPDX-License-Identifier: BSD-3-Clause-Clear
-
+** Changes from Qualcomm Technologies, Inc. are provided under the following license:
+** Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
+** SPDX-License-Identifier: BSD-3-Clause
 */
 
 #include <errno.h>
@@ -75,7 +74,7 @@ void play_sample(FILE *file, unsigned int card, unsigned int device, unsigned in
                  unsigned int channels, unsigned int rate, unsigned int bits,
                  unsigned int *device_kv, unsigned int stream_kv, unsigned int instance_kv,
                  unsigned int *devicepp_kv, struct chunk_fmt fmt, bool haptics, char **intf_name,
-                 int intf_num, bool is_24_LE);
+                 int intf_num, bool is_24_LE, unsigned int period_size, unsigned int period_count);
 
 void stream_close(int sig)
 {
@@ -84,10 +83,10 @@ void stream_close(int sig)
     close = 1;
 }
 
-static void usage(char *progname)
+static void usage(const char *progname)
 {
     printf(" Usage: %s file.wav [-help print usage] [-D card] [-d device]\n"
-           " [-c channels] [-r rate] [-b bits]\n"
+           " [-c channels] [-r rate] [-b bits] [-p period_size] [-n n_periods]\n"
            " [-num_intf num of interfaces followed by interface name]\n"
            " [-i intf_name] : Can be multiple if num_intf is more than 1\n"
            " [-dkv device_kv] : Can be multiple if num_intf is more than 1\n"
@@ -106,11 +105,14 @@ int main(int argc, char **argv)
     struct riff_wave_header riff_wave_header;
     struct chunk_header chunk_header;
     struct chunk_fmt chunk_fmt;
+    const char *progname = argv[0];
     unsigned int card = 100, device = 100, i=0;
     unsigned int usb_device = 1;
     unsigned int channels = 2;
     unsigned int rate = 48000;
     unsigned int bits = 16;
+    unsigned int period_size = 1024;
+    unsigned int period_count = 4;
     int intf_num = 1;
     uint32_t dkv = SPEAKER;
     uint32_t dppkv = DEVICEPP_RX_AUDIO_MBDRC;
@@ -130,7 +132,7 @@ int main(int argc, char **argv)
     }
 
     if (argc < 3) {
-        usage(argv[0]);
+        usage(progname);
         return 1;
     }
 
@@ -138,6 +140,19 @@ int main(int argc, char **argv)
     devicepp_kv[0] = dppkv;
 
     filename = argv[1];
+
+    // Validate filename to prevent path traversal
+    if (strstr(filename, "..") != NULL) {
+        printf("Invalid filename provided.\n");
+        return 1;
+    }
+    // Ensure the filename is within /data directory
+    const char *allowed_prefix = "/data/";
+    if (strncmp(filename, allowed_prefix, strlen(allowed_prefix)) != 0) {
+        printf("Filename must be under /data directory.\n");
+        return 1;
+    }
+
     file = fopen(filename, "rb");
     if (!file) {
         printf("Unable to open file '%s'\n", filename);
@@ -195,6 +210,14 @@ int main(int argc, char **argv)
             argv++;
             if (*argv)
                 card = atoi(*argv);
+        } else if (strcmp(*argv, "-p") == 0) {
+            argv++;
+            if (*argv)
+                period_size = atoi(*argv);
+        } else if (strcmp(*argv, "-n") == 0) {
+            argv++;
+            if (*argv)
+                period_count = atoi(*argv);
         } else if (strcmp(*argv, "-num_intf") == 0) {
             argv++;
             if (*argv)
@@ -261,7 +284,7 @@ int main(int argc, char **argv)
             if (*argv)
                 usb_device = atoi(*argv);
         } else if (strcmp(*argv, "-help") == 0) {
-            usage(argv[0]);
+            usage(progname);
         }
         if (*argv)
             argv++;
@@ -271,7 +294,8 @@ int main(int argc, char **argv)
         return 1;
 
     play_sample(file, card, device, usb_device, channels, rate, bits, device_kv, stream_kv,
-                 instance_kv, devicepp_kv, chunk_fmt, haptics, intf_name, intf_num, is_24_LE);
+                 instance_kv, devicepp_kv, chunk_fmt, haptics, intf_name, intf_num, is_24_LE,
+                 period_size, period_count);
 
     fclose(file);
     if (device_kv)
@@ -288,7 +312,7 @@ void play_sample(FILE *file, unsigned int card, unsigned int device, unsigned in
                  unsigned int channels, unsigned int rate, unsigned int bits,
                  unsigned int *device_kv, unsigned int stream_kv, unsigned int instance_kv,
                  unsigned int *devicepp_kv, struct chunk_fmt fmt, bool haptics, char **intf_name,
-                 int intf_num, bool is_24_LE)
+                 int intf_num, bool is_24_LE, unsigned int period_size, unsigned int period_count)
 {
     struct pcm_config config;
     struct pcm *pcm;
@@ -324,8 +348,8 @@ void play_sample(FILE *file, unsigned int card, unsigned int device, unsigned in
     memset(&config, 0, sizeof(config));
     config.channels = fmt.num_channels;
     config.rate = fmt.sample_rate;
-    config.period_size = 1024;
-    config.period_count = 4;
+    config.period_size = period_size;
+    config.period_count = period_count;
     if (fmt.bits_per_sample == 32) {
         if (is_24_LE)
             config.format = PCM_FORMAT_S24_LE;

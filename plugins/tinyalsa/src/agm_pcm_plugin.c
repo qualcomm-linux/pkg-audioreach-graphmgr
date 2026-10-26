@@ -1,32 +1,36 @@
 /*
-** Copyright (c) 2019, 2021 The Linux Foundation. All rights reserved.
-** Copyright (c) 2022, 2023 Qualcomm Innovation Center, Inc. All rights reserved.
-**
-** Redistribution and use in source and binary forms, with or without
-** modification, are permitted provided that the following conditions are
-** met:
-**   * Redistributions of source code must retain the above copyright
-**     notice, this list of conditions and the following disclaimer.
-**   * Redistributions in binary form must reproduce the above
-**     copyright notice, this list of conditions and the following
-**     disclaimer in the documentation and/or other materials provided
-**     with the distribution.
-**   * Neither the name of The Linux Foundation nor the names of its
-**     contributors may be used to endorse or promote products derived
-**     from this software without specific prior written permission.
-**
-** THIS SOFTWARE IS PROVIDED "AS IS" AND ANY EXPRESS OR IMPLIED
-** WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
-** MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT
-** ARE DISCLAIMED.  IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS
-** BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-** CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-** SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR
-** BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
-** WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
-** OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN
-** IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-**/
+ * Copyright (c) 2019-2021, The Linux Foundation. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are
+ * met:
+ *   * Redistributions of source code must retain the above copyright
+ *     notice, this list of conditions and the following disclaimer.
+ *   * Redistributions in binary form must reproduce the above
+ *     copyright notice, this list of conditions and the following
+ *     disclaimer in the documentation and/or other materials provided
+ *     with the distribution.
+ *   * Neither the name of The Linux Foundation nor the names of its
+ *     contributors may be used to endorse or promote products derived
+ *     from this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED "AS IS" AND ANY EXPRESS OR IMPLIED
+ * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT
+ * ARE DISCLAIMED.  IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR
+ * BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+ * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
+ * OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN
+ * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ * Changes from Qualcomm Technologies, Inc. are provided under the following license:
+ * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
+ * SPDX-License-Identifier: BSD-3-Clause
+ *
+ */
 
 #define LOG_TAG "PLUGIN: pcm"
 
@@ -129,7 +133,7 @@ struct pcm_plugin_hw_constraints agm_pcm_constrs = {
         .max = 8,
     },
     .period_bytes = {
-        .min = 96,
+        .min = 16,
         .max = 122880,
     },
 };
@@ -329,7 +333,7 @@ static int agm_pcm_plugin_update_hw_ptr(struct agm_pcm_priv *priv)
 
     if (ret == 0) {
         circ_buf_pos = agm_pcm_bytes_to_frames(read_index, priv->media_config);
-        pos = (circ_buf_pos / period_size) * period_size;
+        pos = circ_buf_pos;
         old_hw_ptr = agm_pcm_plugin_get_hw_ptr(priv);
         hw_base = priv->pos_buf->hw_ptr_base;
 
@@ -346,7 +350,7 @@ static int agm_pcm_plugin_update_hw_ptr(struct agm_pcm_priv *priv)
                                          priv->pos_buf->wall_clk_lsw);
             // Compute delta only if diff is greater than zero
             if (dsp_wall_clk > cached_wall_clk) {
-                __builtin_usubl_overflow(dsp_wall_clk,cached_wall_clk,&sub_res);
+                __builtin_sub_overflow(dsp_wall_clk, cached_wall_clk, &sub_res);
                 delta_wall_clk_us = (int64_t)sub_res;
             }
         }
@@ -715,10 +719,6 @@ static int agm_pcm_close(struct pcm_plugin *plugin)
         priv->mmap_status = false;
     }
     if (priv->buf_info) {
-        if (priv->buf_info->data_buf_fd != -1)
-            close(priv->buf_info->data_buf_fd);
-        if (priv->buf_info->pos_buf_fd != -1)
-            close(priv->buf_info->pos_buf_fd);
         free(priv->buf_info);
     }
     free(plugin->priv);

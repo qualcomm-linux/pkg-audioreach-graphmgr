@@ -26,9 +26,9 @@
  * OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN
  * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
- * \copyright
- *  Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
- *  SPDX-License-Identifier: BSD-3-Clause
+ ** Changes from Qualcomm Technologies, Inc. are provided under the following license:
+ * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
+ * SPDX-License-Identifier: BSD-3-Clause
  */
 #define LOG_TAG "AGM: graph"
 
@@ -2176,7 +2176,7 @@ int graph_get_tckv_data_from_acdb(
     uint32_t *ptr = NULL;
     size_t query_payload_size = *payload_size;
     struct apm_module_param_data_t *param = (apm_module_param_data_t *)payload;
-    uint8_t *param_list;
+    uint32_t *param_list;
 
     if (!payload) {
         return -EINVAL;
