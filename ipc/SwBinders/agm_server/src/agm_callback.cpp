@@ -155,7 +155,9 @@ int32_t BnCallback::onTransact(uint32_t code,
     blob.release();
     client_data = (void *)data.readInt64();
     data.read(&cb_func, sizeof(agm_event_cb *));
-    return event_cb(session_id, event_params, client_data, cb_func);
+    int ret = event_cb(session_id, event_params, client_data, cb_func);
+    free(event_params);
+    return ret;
 }
 
 int BnCallback::event_cb(uint32_t session_id,

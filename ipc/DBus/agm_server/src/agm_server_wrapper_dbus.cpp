@@ -30,7 +30,7 @@
 /*
 ** Changes from Qualcomm Technologies, Inc. are provided under the following license:
 ** Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
-** SPDX-License-Identifier: BSD-3-Clause-Clear
+** SPDX-License-Identifier: BSD-3-Clause
 **/
 
 #define LOG_TAG "agm_server_wrapper_dbus"
@@ -2621,6 +2621,10 @@ void ipc_agm_deinit() {
 
     if (mdata == NULL) {
         AGM_LOGE("ipc_agm_deinit failed");
+        return;
+    }
+
+    if (mdata->sessions != NULL) {
         g_hash_table_remove_all(mdata->sessions);
         g_hash_table_unref(mdata->sessions);
     }

@@ -26,8 +26,9 @@
 <!-- OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN            -->
 <!-- IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.                                     -->
 <!--                                                                                   -->
-<!-- Copyright (c) Qualcomm Innovation Center, Inc. All Rights Reserved.               -->
-<!-- SPDX-License-Identifier: BSD-3-Clause-Clear                                       -->
+<!-- Changes from Qualcomm Technologies,Inc. are provided under the following license: -->
+<!-- Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.                -->
+<!-- SPDX-License-Identifier: BSD-3-Clause                                             -->
 
 <config>
     <group_device name="TDM-LPAIF-RX-TERTIARY" rate="96000" ch="3" bits="16" slot_mask="7"/>
@@ -164,6 +165,8 @@
     <device name="QAIF-QAIF_AUD-TX-4" rate="48000" ch="1" bits="16" />
     <device name="QAIF-QAIF_AUD-RX-5" rate="48000" ch="1" bits="16" />
     <device name="QAIF-QAIF_AUD-TX-5" rate="48000" ch="1" bits="16" />
+    <device name="QAIF-QAIF_AUD-TX-8" rate="48000" ch="1" bits="16" />
+    <device name="QAIF-QAIF_AUD-RX-8" rate="48000" ch="1" bits="16" />
     <device name="QAIF-QAIF_VA-RX-0" rate="48000" ch="1" bits="16" />
     <device name="QAIF-QAIF_VA-TX-0" rate="48000" ch="1" bits="16" />
 </config>

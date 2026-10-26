@@ -28,7 +28,7 @@
 **
 ** Changes from Qualcomm Technologies, Inc. are provided under the following license:
 ** Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
-** SPDX-License-Identifier: BSD-3-Clause-Clear
+** SPDX-License-Identifier: BSD-3-Clause
 **/
 
 #define LOG_TAG "PLUGIN: AGMIO"
@@ -219,6 +219,8 @@ static int agm_io_hw_params(snd_pcm_ioplug_t * io,
     int ret = 0, sess_mode = 0;
 
     ret = agm_get_session_handle(pcm, &handle);
+    if (ret)
+        return ret;
 
     pcm->frame_size = (snd_pcm_format_physical_width(io->format) * io->channels) / 8;
 
@@ -283,12 +285,15 @@ static int agm_io_close(snd_pcm_ioplug_t * io)
     struct agmio_priv *pcm = io->private_data;
     uint64_t handle;
     int ret = 0;
+    if (!pcm)
+        return -EINVAL;
 
     ret = agm_get_session_handle(pcm, &handle);
-    if (ret)
-        return ret;
+    if (!ret)
+        ret = agm_session_close(handle);
 
-    ret = agm_session_close(handle);
+    if (pcm->event_fd >= 0)
+        close(pcm->event_fd);
 
     snd_card_def_put_card(pcm->card_node);
     free(pcm->buffer_config);
@@ -452,16 +457,25 @@ SND_PCM_PLUGIN_DEFINE_FUNC(agm)
         return -ENOMEM;
 
     media_config = calloc(1, sizeof(struct agm_media_config));
-    if (!media_config)
+    if (!media_config) {
+        free(priv);
         return -ENOMEM;
+    }
 
     buffer_config = calloc(1, sizeof(struct agm_buffer_config));
-    if (!buffer_config)
+    if (!buffer_config) {
+        free(media_config);
+        free(priv);
         return -ENOMEM;
+    }
 
     session_config = calloc(1, sizeof(struct agm_session_config));
-    if (!session_config)
+    if (!session_config) {
+        free(buffer_config);
+        free(media_config);
+        free(priv);
         return -ENOMEM;
+    }
 
     snd_config_for_each(it, next, conf) {
         snd_config_t *n = snd_config_iterator_entry(it);
@@ -540,18 +554,30 @@ SND_PCM_PLUGIN_DEFINE_FUNC(agm)
     if ((priv->event_fd = eventfd(0, EFD_CLOEXEC)) == -1) {
         AGM_LOGE("failed to create event_fd\n");
         ret = -EINVAL;
-        goto err_free_priv;
+        /* snd_pcm_ioplug_delete will final call agm_io_close().
+        And it will release priv and associated resources */
+        snd_pcm_ioplug_delete(&priv->io);
+        return ret;
     }
 
     ret = agm_hw_constraint(priv);
     if (ret < 0) {
         snd_pcm_ioplug_delete(&priv->io);
-        goto err_free_priv;
+        return ret;
     }
 
     *pcmp = priv->io.pcm;
     return 0;
 err_free_priv:
+    if (priv && priv->event_fd >= 0)
+        close(priv->event_fd);
+    if (priv && priv->handle)
+        agm_session_close(priv->handle);
+    if (priv && priv->card_node)
+        snd_card_def_put_card(priv->card_node);
+    free(session_config);
+    free(buffer_config);
+    free(media_config);
     free(priv);
     return ret;
 }

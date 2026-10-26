@@ -26,9 +26,9 @@
 ** OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN
 ** IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 **
-** Changes from Qualcomm Innovation Center are provided under the following license:
-** Copyright (c) 2022-2023 Qualcomm Innovation Center, Inc. All rights reserved.
-** SPDX-License-Identifier: BSD-3-Clause-Clear
+** Changes from Qualcomm Technologies, Inc. are provided under the following license:
+** Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
+** SPDX-License-Identifier: BSD-3-Clause
 **/
 
 #define LOG_TAG "AGM: device"
@@ -56,7 +56,7 @@
 #define SNDCARD_PATH "/sys/kernel/snd_card/card_state"
 #define PCM_DEVICE_FILE "/proc/asound/pcm"
 #define MAX_RETRY 100 /*Device will try these many times before return an error*/
-#define RETRY_INTERVAL 1 /*Retry interval in seconds*/
+#define RETRY_INTERVAL_MS 50 /*Retry interval in milliseconds*/
 
 #ifdef DYNAMIC_LOG_ENABLED
 #include <log_xml_parser.h>
@@ -388,9 +388,12 @@ int device_open(struct device_obj *dev_obj)
                 &config);
     if (!pcm || !pcm_is_ready(pcm)) {
         AGM_LOGE("Unable to open PCM device %u (%s) rate %u ch %d fmt %u",
-                obj->pcm_id, pcm_get_error(pcm), config.rate,
+                obj->pcm_id,
+                pcm ? pcm_get_error(pcm) : "pcm is NULL", config.rate,
                 config.channels, config.format);
         AGM_LOGE("Period Size %d \n", config.period_size);
+        if (pcm)
+            pcm_close(pcm);
         ret = -EIO;
         goto done;
     }
@@ -1091,13 +1094,13 @@ static int parse_virtual_snd_card()
                                           SND_NODE_TYPE_PCM,
                                           node_list, num_nodes);
     if (ret) {
-        AGM_LOGI("%s: failed to get non-alsa pcm node list, err %d, continuing\n", ret);
+        AGM_LOGI("%s: failed to get non-alsa pcm node list, err %d, continuing\n", __func__, ret);
         goto done;
     }
 
     for (i = 0; i < num_nodes; i++) {
         void *node = node_list[i];
-        uint32_t is_backend = 1;
+        uint32_t is_backend = 0;
         char *name = NULL, *so_name = NULL;
 
         snd_card_def_get_int(node, "backend", &is_backend);
@@ -1246,7 +1249,7 @@ static int wait_for_snd_card_to_online()
         }
 #endif
         retries--;
-        sleep(RETRY_INTERVAL);
+        usleep(RETRY_INTERVAL_MS * 1000);
     } while ( retries > 0);
 
     if (0 == retries) {
@@ -1453,7 +1456,7 @@ bool get_file_path_extn(char* file_path_extn, char* file_path_extn_wo_variant)
             break;
         } else {
             AGM_LOGI("Sound card not found, retry %d", retry++);
-            sleep(1);
+            usleep(RETRY_INTERVAL_MS * 1000);
         }
     } while (!snd_card_found && retry <= MAX_RETRY_CNT);
 
