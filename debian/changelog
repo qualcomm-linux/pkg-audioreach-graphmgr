@@ -1,8 +1,12 @@
-audioreach-graphmgr (1.0.1-0qli4~) UNRELEASED; urgency=medium
+audioreach-graphmgr (1.1.1-0qli1~) UNRELEASED; urgency=medium
 
+  [ Debusine Action Bot ]
   * Unreleased changes
 
- -- Debusine Action Bot <noreply@bot.invalid>  Thu, 01 Oct 2026 14:23:51 +0000
+  [ GitHub Service Bot ]
+  * New upstream release
+
+ -- GitHub Service Bot <githubservice@qti.qualcomm.com>  Mon, 26 Oct 2026 14:06:27 +0000
 
 audioreach-graphmgr (1.0.1-0qli3) forky; urgency=medium
 
